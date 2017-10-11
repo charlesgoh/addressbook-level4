@@ -1,5 +1,7 @@
 package seedu.address.storage;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -89,4 +91,10 @@ public class StorageManager extends ComponentManager implements Storage {
         }
     }
 
+    @Override
+    public void changeFilePath(String fp, UserPrefs u) {
+        requireNonNull(fp);
+        u.setAddressBookFilePath(fp);
+        addressBookStorage.changeFilePath(fp, u);
+    }
 }

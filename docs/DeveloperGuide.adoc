@@ -10,7 +10,7 @@ ifdef::env-github[]
 :note-caption: :information_source:
 endif::[]
 ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-:repoURL: https://github.com/se-edu/addressbook-level4/tree/master
+:repoURL: https://github.com/CS2103T-W09B2/addressbook-level4
 
 By: `Team SE-EDU`      Since: `Jun 2016`      Licence: `MIT`
 
@@ -727,14 +727,54 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 
 |`* * *` |user |delete a person |remove entries that I no longer need
 
-|`* * *` |user |find a person by name |locate details of persons without having to go through the entire list
+|`* * *` |user |have a search function |easily search for the contact I am looking for without browsing through thousands of contacts
+
+|`* * *` |user |have the option to edit my created contacts |make changes to the contacts that I have added
+
+|`* * *` |error-prone user |have the ability to Undo and Redo |automatically undo or redo the changes that I have made
+
+|`* * *` |user with secretive friends |be able to add contacts with incomplete data |operate without the need to create dummy values
 
 |`* *` |user |hide link:#private-contact-detail[private contact details] by default |minimize chance of someone else seeing them by accident
 
-|`*` |user with many persons in the address book |sort persons by name |locate a person easily
-|=======================================================================
+|`* *` |user |load contact data from any file of my choosing | have more flexibility for my file's storage location
 
-{More to be added}
+|`* *` |user |save contact data in a directory of my choosing |save the file in a location that fits my needs
+
+|`* *` |user |type commands partially and have the application fill in the rest for me | increase typing productivity
+
+|`* *` |first-time user |be able to see a user guide when I first start the program |be clear on how to use it
+
+|`* *` |multi-tasking user |be able to record things other than contacts, such as tasks |manage myself better
+
+|`* *` |user |be able to filter my contacts based on tags |view the people who are relevant to me
+
+|`* *` |organized user |be able to sort my contacts by different fields such as by name and birthday  |better organize my contacts
+
+|`* *` |user with multiple devices |be able to import and export my address book |use the address book without having to add all my contacts when I switch platforms
+
+|`* *` |user with many social media accounts |be able to add my contacts' social media accounts to the address book |improve connectivity and learn more about my contacts
+
+|`* *` |user who values privacy |be able to to choose and modify which contacts and what information are to be displayed |hide information I do not want to share from others
+
+|`*` |user with many persons in the address book |sort persons by name |locate a person easily
+
+|`*` |lazy user |have an easy way to add a person with his full details into my address book |add new contacts quickly
+
+|`*` |user who values aesthetics |be able to customize my layout |display self-identity, and use a layout that I like
+
+|`*` |user |have the ability to add a short description to my contacts |add more information about my contacts
+
+|`*` |long-time user |be able to access shortcut commands |use the address book more efficiently
+
+|`*` |non tech-savvy user |have the option to fill out certain fields |use the address book without having to use the intimidating CLI.
+
+|`*` |error-prone user |have minor typos auto corrected |continue using the address book without correcting my mistakes
+
+|`*` |user |be able to update the address book application easily when new updates are published |continue using the address book easily with any newly added features
+
+
+|=======================================================================
 
 [appendix]
 == Use Cases
@@ -767,7 +807,125 @@ Use case ends.
 +
 Use case resumes at step 2.
 
-{More to be added}
+[discrete]
+=== Use case: Search for person
+
+*MSS*
+
+1.  User requests to search for a person with criteria
+2.  AddressBook shows a list of persons who match the criteria
++
+Use case ends.
+
+*Extensions*
+
+[none]
+* 2a. The list is empty.
++
+Use case ends.
+
+* 2b. No such person was found.
++
+[none]
+** 2b1. AddressBook informs the user that no matching users were found.
++
+Use case ends.
+
+[discrete]
+=== Use case: Edit person
+
+*MSS*
+
+1.  User requests to list persons
+2.  AddressBook shows a list of persons
+3.  User requests to change the details of a specific person in the list
+4.  AddressBook changes the details of the specified person.
+5.  AddressBook shows the new details of the person.
++
+Use case ends.
+
+*Extensions*
+
+[none]
+* 2a. The list is empty.
++
+Use case ends.
+
+* 3a. The given index is invalid.
++
+[none]
+** 3a1. AddressBook shows an error message.
++
+Use case resumes at step 2.
+
+* 3b. The specified detail to change is invalid.
++
+[none]
+** 3b1. AddressBook shows an error message.
++
+Use case resumes at step 2.
+
+* 4a. The specified detail to change is exactly the same as the previous detail.
++
+[none]
+** 4a1. AddressBook informs the user that no change was made.
++
+Use case ends.
+
+[discrete]
+=== Use case: Undo/Redo by multiple steps
+
+*MSS*
+
+1.  User requests to undo/redo a specified number of steps
+2.  AddressBook undos/redos the last X commands, where X was the number of commands to undo/redo
+3.  AddressBook displays a success message
+4.  AddressBook displays a list of all the commands that were undone/redone.
++
+Use case ends.
+
+*Extensions*
+
+[none]
+* 2a. The number of commands entered were less than the specified number of undo commands.
++
+[none]
+** 2a1. AddressBook undos all previous commands.
++
+Use case resumes at step 3.
+
+[none]
+* 2b. The number of commands entered were less than the specified number of redo commands.
++
+[none]
+** 2b1. AddressBook redos all previously undone commands.
++
+Use case resumes at step 3
+
+[discrete]
+=== Use case: Sort
+
+*MSS*
+
+1.  User requests to sort by a criteria
+2.  AddressBook sorts the contacts by the criteria
+3.  AddressBook shows a success message.
++
+Use case ends.
+
+*Extensions*
+
+[none]
+* 2a. The list is empty.
++
+Use case ends.
+
+* 1a. The given criteria is invalid.
++
+[none]
+** 1a1. AddressBook shows an error message.
++
+Use case resumes at step 1.
 
 [appendix]
 == Non Functional Requirements
@@ -775,8 +933,10 @@ Use case resumes at step 2.
 .  Should work on any link:#mainstream-os[mainstream OS] as long as it has Java `1.8.0_60` or higher installed.
 .  Should be able to hold up to 1000 persons without a noticeable sluggishness in performance for typical usage.
 .  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-
-{More to be added}
+.  Feature sets are to be rolled out on a regular weekly basis, following the proper forking workflow procedure.
+.  The application should be intuitive the target users: students (and professionals) who prefer typing over using the mouse.
+.  Future versions of the application should be backwards compatible with data saved in versions after v1.0.
+.  The application is not required to handle physical printing.
 
 [appendix]
 == Glossary
@@ -788,11 +948,11 @@ Mainstream OS
 Windows, Linux, Unix, OS-X
 ....
 
-[[private-contact-detail]]
-Private contact detail
+[[backwards-compatible]]
+Backwards Compatible
 
 ....
-A contact detail that is not meant to be shared with others
+In the context of this project, backwards compatible save data refers to the ability for multiple versions of this application to use the same saved data.
 ....
 
 [appendix]

@@ -10,7 +10,7 @@ ifdef::env-github[]
 :tip-caption: :bulb:
 :note-caption: :information_source:
 endif::[]
-:repoURL: https://github.com/se-edu/addressbook-level4
+:repoURL: https://github.com/CS2103AUG2017-W09-B2/main
 
 By: `Team SE-EDU`      Since: `Jun 2016`      Licence: `MIT`
 
@@ -52,33 +52,46 @@ e.g. typing *`help`* and pressing kbd:[Enter] will open the help window.
 
 === Viewing help : `help`
 
-Format: `help`
+Format: `help` +
+Alternatively, the keyboard shortcut `F1` may be used.
 
-=== Adding a person: `add`
+=== Adding a person/task: `add` `addtask`
 
-Adds a person to the address book +
-Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]...`
+Adds a person or task to the address book +
+Format (person): `add n/NAME p/[PHONE_NUMBER] e/[EMAIL] a/[ADDRESS] b/[BIRTHDAY] c/[GOOGLE CALENDAR URL] [t/TAG]...` +
+Format (task): `addtask n/NAME [d/DESCRIPTION] [t/DEADLINE] [p/PRIORITY]` +
+Shorthand commands: `a` `at`
 
 [TIP]
-A person can have any number of tags (including 0)
+A person can have any number of tags (including 0) +
+A task can have the following 5 priorities: `lowest, low, normal, high, highest` +
+Newly added tasks are marked as incomplete by default.
 
 Examples:
 
-* `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
+* `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 b/11-11-1995`
+* `add n/Betsy Crowe t/friend e/betsycrowe@example.com b/29-02-1996 a/Newgate Prison p/1234567 t/criminal`
+* `add n/Ima Hidearu b/ a/ e/ p/ t/secretive`
+* `add n/Luke Groundswimmer p/ a/ e/ c/`
+* `addtask n/Update documentationn d/Update docs for V1.1 for CS2103T t/10-10-17 p/high`
+* `addtask n/Buy new pencil p/low`
 
-=== Listing all persons : `list`
+=== Listing all persons : `list` `listtask`
 
-Shows a list of all persons in the address book. +
-Format: `list`
+Shows a list of all persons or tasks in the address book. +
+Format (person): `list` +
+Format (task): `listtask` +
+Shorthand commands: `l` `lt`
 
-=== Editing a person : `edit`
+=== Editing a person : `edit` `edittask`
 
 Edits an existing person in the address book. +
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]...`
+Format (person): `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [b/BIRTHDAY] c/[GOOGLE CALENDAR URL] [t/TAG]...` +
+Format (task): `edittask INDEX [n/NAME] [d/DESCRIPTION] [t/DEADLINE] [p/PRIORITY]` +
+Shorthand commands: `e` `et`
 
 ****
-* Edits the person at the specified `INDEX`. The index refers to the index number shown in the last person listing. The index *must be a positive integer* 1, 2, 3, ...
+* Edits the person/task at the specified `INDEX`. The index refers to the index number shown in the last listing. The index *must be a positive integer* 1, 2, 3, ...
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * When editing tags, the existing tags of the person will be removed i.e adding of tags is not cumulative.
@@ -91,16 +104,44 @@ Examples:
 Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
 * `edit 2 n/Betsy Crower t/` +
 Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
+* `edit 1 p/` +
+Removes the phone number of the 1st person.
+* `edittask 2 p/highest` +
+Edits the priority of the 2nd task to be `highest`.
 
-=== Locating persons by name: `find`
+=== Changing the Privacy of a person's details : `changeprivacy` `cp` (To be added in V2.0)
 
-Finds persons whose names contain any of the given keywords. +
-Format: `find KEYWORD [MORE_KEYWORDS]`
+Changes the privacy settings of the details for an existing person in the address book. +
+Format: `changeprivacy INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [b/BIRTHDAY] [t/TAG]`
 
+****
+* Changes the privacy settings of the details for the person at the specified `INDEX`. The index refers to the index number shown in the last person listing. The index *must be a positive integer* 1, 2, 3, ...
+* At least one of the optional fields must be provided.
+* The 6 optional values after `/` can only take in `show` or `hide` as inputs.
+* Fields with an input of `show` will set the privacy of that field for that person to be public. The data in that field will be visible in the UI.
+* Fields with an input of `hide` will set the privacy of that field for that person to be private. The data in that field will remain stored but not be visible in the UI.
+* Details that do not originally contain any data will still remain empty after changing their privacy
+****
+
+Examples:
+
+* `changeprivacy 1 p/show e/hide` +
+Sets the phone number of the 1st person to be public and their email address to be private. The 1st person's phone number will be displayed, if available, while their email address will be hidden in the UI.
+* `cp 2 a/show b/hide t/show` +
+Sets the address and tags of the 2nd person to be public and their birthday to be private. The 2nd person's address and tags will be displayed, if available, while their birthday will be hidden in the UI.
+
+=== Locating persons by name: `find` `findtask`
+
+Finds persons/tasks whose names or description contain any of the given keywords. +
+Format (person): `find KEYWORD [MORE_KEYWORDS]` +
+Format (task): `findtask KEYWORD [MORE_KEYWORDS] [p/PRIORITY] +
+Shorthand commands: `f` `ft`
 ****
 * The search is case insensitive. e.g `hans` will match `Hans`
 * The order of the keywords does not matter. e.g. `Hans Bo` will match `Bo Hans`
-* Only the name is searched.
+* Only the name is searched for persons.
+* Tasks may also be searched based on their `PRIORITY`, in addition to any other keywords being searched
+* If a priority search is used, all tasks that have a priority level above that of the keyword will be returned. e.g. p/normal will match all `normal, high, highest` tasks.
 * Only full words will be matched e.g. `Han` will not match `Hans`
 * Persons matching at least one keyword will be returned (i.e. `OR` search). e.g. `Hans Bo` will return `Hans Gruber`, `Bo Yang`
 ****
@@ -111,14 +152,21 @@ Examples:
 Returns `john` and `John Doe`
 * `find Betsy Tim John` +
 Returns any person having names `Betsy`, `Tim`, or `John`
+* `findtask update` +
+Returns any task that has the word `update` in their names or descriptions
+* `findtask update high` +
+Returns all tasks that has the word `update` in their names or descriptions, and are of priority `high` or higher.
 
-=== Deleting a person : `delete`
 
-Deletes the specified person from the address book. +
-Format: `delete INDEX`
+=== Deleting a person : `delete` `deletetask`
+
+Deletes the specified person or task from the address book. +
+Format (person): `delete INDEX` +
+Format (task): `deletetask INDEX`+
+Shorthand commands: `d` `dt`
 
 ****
-* Deletes the person at the specified `INDEX`.
+* Deletes the person or task at the specified `INDEX`.
 * The index refers to the index number shown in the most recent listing.
 * The index *must be a positive integer* 1, 2, 3, ...
 ****
@@ -131,6 +179,12 @@ Deletes the 2nd person in the address book.
 * `find Betsy` +
 `delete 1` +
 Deletes the 1st person in the results of the `find` command.
+* `listtask` +
+`deletetask 2` +
+Deletes the 2nd task in the address book.
+* `findtask update` +
+`deletetask 1` +
+Deletes the 1st task in the results of the `findtask` command.
 
 === Sorting all persons : `sort`
 
@@ -150,13 +204,16 @@ Sorts all persons in the address book in ascending order by the name field.
 * `sort address desc` +
 Sorts all persons in the address book in descending order by the address field.
 
-=== Selecting a person : `select`
+=== Selecting a person : `select` `selecttask`
 
 Selects the person identified by the index number used in the last person listing. +
-Format: `select INDEX`
+Format (person): `select INDEX` +
+Format (task): `selecttask INDEX` +
+Shorthand commands: `s` `st`
 
 ****
 * Selects the person and loads the Google search page the person at the specified `INDEX`.
+* Selecting a task will load a list of the people who are assigned to it, instead of the Google search page.
 * The index refers to the index number shown in the most recent listing.
 * The index *must be a positive integer* `1, 2, 3, ...`
 ****
@@ -169,11 +226,108 @@ Selects the 2nd person in the address book.
 * `find Betsy` +
 `select 1` +
 Selects the 1st person in the results of the `find` command.
+* `listtask` +
+`selecttask 2` +
+Selects the 2nd task in the address book.
+* `findtask update` +
+`selecttask 1` +
+Selects the 1st task in the results of the `findtask` command.
+
+=== Mark task as complete : `setcomplete` (To be coming in V2.0)
+
+Sets the specified task as complete. +
+Format: `setcomplete INDEX` +
+Shorthand commands: `stc`
+
+****
+* Marks the task at the specified `INDEX` as completed.
+* The index refers to the index number shown in the most recent listing.
+* The index *must be a positive integer* 1, 2, 3, ...
+****
+
+Examples:
+
+* `listtask` +
+`setcomplete 2` +
+Sets the 2nd task in the address book as completed.
+* `findtask update` +
+`setcomplete 1` +
+Sets the 1st task in the results of the `findtask` command as completed.
+
+=== Mark task as incomplete : `setincomplete` (To be coming in V2.0)
+
+Sets the specified task as incomplete. +
+Format: `setincomplete INDEX` +
+Shorthand commands: `sti`
+
+****
+* Marks the task at the specified `INDEX` as incomplete.
+* The index refers to the index number shown in the most recent listing.
+* The index *must be a positive integer* 1, 2, 3, ...
+****
+
+Examples:
+
+* `listtask` +
+`setincomplete 2` +
+Sets the 2nd task in the address book as incomplete.
+* `findtask update` +
+`setincomplete 1` +
+Sets the 1st task in the results of the `findtask` command as incomplete.
+
+=== Assign contacts to task : `assign` (To be coming in V2.0)
+
+Assigns the people associated with the PEOPLEINDEX to the task at the specified TASKINDEX. +
+Format: `assign TASKINDEX PEOPLEINDEX...` +
+Shorthand commands: `ast`
+
+****
+* The PEOPLEINDEX refers to the index numbers shown in the most recent *person* listing.
+* The TASKINDEX refers to the index number shown in the most recent *task* listing.
+* At least 1 or more PEOPLEINDEX must be present in the command.
+* PERSONINDEX and TASKINDEX *must be positive integers* 1, 2, 3, ...
+****
+
+Examples:
+
+* `list` +
+`listtask` +
+`assign 2 1 4 5` +
+Assigns the 2nd task in the address book to the 1st, 4th and 5th contacts.
+* `list` +
+`findtask update` +
+`assign 1 2` +
+Assigns the 1st task in the results of the `findtask` command to the 2nd person in the address book.
+
+=== Dismiss contacts from task : `dismiss` (To be coming in V2.0)
+
+Removes assignment of the people associated with the PEOPLEINDEX to the task at the specified TASKINDEX. +
+Format: `dismiss TASKINDEX PEOPLEINDEX...` +
+Shorthand commands: `dt`
+
+****
+* The PEOPLEINDEX refers to the index numbers shown in the most recent *person* listing.
+* The TASKINDEX refers to the index number shown in the most recent *task* listing.
+* At least 1 or more PEOPLEINDEX must be present in the command.
+* PERSONINDEX and TASKINDEX *must be positive integers* 1, 2, 3, ...
+****
+
+Examples:
+
+* `list` +
+`listtask` +
+`dismiss 2 1 4 5` +
+Dismisses 1st, 4th and 5th contacts in the address book from the 2nd task.
+* `list` +
+`findtask update` +
+`dismiss 1 2` +
+Dismisses the 2nd person in the address book from the 1st task in the results of the `findtask` command.
 
 === Listing entered commands : `history`
 
 Lists all the commands that you have entered in reverse chronological order. +
-Format: `history`
+Format: `history` +
+Shorthand commands: `h`
 
 [NOTE]
 ====
@@ -184,7 +338,8 @@ Pressing the kbd:[&uarr;] and kbd:[&darr;] arrows will display the previous and 
 === Undoing previous command : `undo`
 
 Restores the address book to the state before the previous _undoable_ command was executed. +
-Format: `undo`
+Format: `undo` +
+Shorthand commands: `u`
 
 [NOTE]
 ====
@@ -210,7 +365,8 @@ The `undo` command fails as there are no undoable commands executed previously.
 === Redoing the previously undone command : `redo`
 
 Reverses the most recent `undo` command. +
-Format: `redo`
+Format: `redo` +
+Shorthand commands: `r`
 
 Examples:
 
@@ -230,43 +386,146 @@ The `redo` command fails as there are no `undo` commands executed previously.
 `redo` (reapplies the `clear` command) +
 // end::undoredo[]
 
-=== Clearing all entries : `clear`
+=== Setting a budget : `setbudget` `sb` (To be added in V2.0)
+
+Sets the amount of money available to be a certain amount.
+Format: `setbudget MONEY [t/TAG]`
+
+****
+* Set a certain amount of money to keep track of as a budget.
+* The value can be tagged so that multiple things can be kept track of at the same time.
+* The input for `MONEY` must be greater than or equal to 0.
+* Up to 2 decimal points can be input for `MONEY` to keep track of cents.
+****
+
+Examples:
+
+* `setbudget 42.50 t/food` +
+Sets a $42.50 food budget.
+
+* `sb 60 t/transport` +
+Sets a $60 transport budget.
+
+* `sb 2000` +
+Sets a $2000 untagged budget.
+
+=== Spending : `spend` `sp` (To be added in V2.0)
+
+Spends the money from an existing budget.
+Format: `spend MONEY [t/TAG]`
+
+****
+* Spends a certain amount of money from an existing budget.
+* The tag is used to determine which budget to spend from.
+* The input for `MONEY` must be greater than or equal to 0.
+* Up to 2 decimal points can be input for `MONEY` to keep track of cents.
+* Upon successful spending, the value stored by a budget will be reduced by the amount spent.
+* If a budget for the input tag does not exist,
+a message will appear telling the user that a budget corresponding to the input tag does not exist
+* If spending exceeds the budget, a message will appear in the UI
+warning the user that they have exceeded their budget.
+The amount of money in the budget will remain the same.
+
+****
+
+Examples:
+
+* `setbudget 42.50 t/food` +
+`spend 2.4 t/food` +
+Sets a $42.50 food budget and spends $2.40, leaving a budget of $40.10.
+
+* `sb 60` +
+`spend 0.50` +
+Sets a $60 untagged budget and spends $0.50, leaving a budget of $59.50.
+
+=== Clearing all entries : `clear` `c`
 
 Clears all entries from the address book. +
-Format: `clear`
+Format: `clear` +
+Shorthand commands: `c`
 
 === Exiting the program : `exit`
 
 Exits the program. +
 Format: `exit`
 
+Alternatively, the keyboard shortcut `ALT+F4` may be used.
+
 === Saving the data
 
 Address book data are saved in the hard disk automatically after any command that changes the data. +
 There is no need to save manually.
 
+To change the location of the save file, click on `File -> Save As` or use the keyboard shortcut `CTRL+S` and select the new location and file name for the save file in the pop-up window.
+
+To open a different save file, click on `File -> Open` or use the keyboard shortcut `CTRL+O` and select the new save file to use from the pop-up window.
+
+=== Using the browser (To be added in V2.0)
+
+Clicking on a box containing a contact will open the browser on the right side of the window.
+****
+* Performing a left click will cause the browser to perform a search on Google for the name of the contact.
+* Performing a right click will open Google Maps, which will search for the address of the contact.
+* If a person's name or address is set to private, the browser will not perform a search when that person's box is clicked.
+****
+
+=== Exporting the data
+
+Address book data can be exported in a number of different formats, thus allowing the data to be compatible to any device.
+
+To export data, click on `File -> Export As...` or use the keyboard shortcut `CTRL+E` and select the new location and file name for the export file in the pop-up window.
+
+=== Auto-Complete: Learning Your Typing Habits
+
+The program will learn your typing habits and give autocomplete suggestions that become more accurate over time.
+
 == FAQ
 
 *Q*: How do I transfer my data to another Computer? +
-*A*: Install the app in the other computer and overwrite the empty data file it creates with the file that contains the data of your previous Address Book folder.
+*A*: Install the app in the other computer and overwrite the empty data file it creates with the file that contains the data of your previous Address Book folder. The Open command `CTRL+O` can also be used instead of manually overwriting the file if you wish to keep the original data file or store the new data file in a seperate location.
 
 == Command Summary
 
-* *Add* `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]...` +
-e.g. `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
-* *Clear* : `clear`
-* *Delete* : `delete INDEX` +
+* *Add* : `add or a n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS c/[GOOGLE CALENDAR URL] [t/TAG]...` +
+e.g. `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665, c/www.enteryourcalendarurlhere.com t/friend t/colleague`
+* *Add task* : `addtask n/NAME d/DESCRIPTION [t/DEADLINE] [p/PRIORITY]` +
+e.g. `addtask n/Update Documentation d/Update documentations for V1.1 for CS2103T t/30/10/17 p/high`
+* *Clear person* : `clear`
+* *Clear tasks* : `cleartask`
+* *Delete person* : `delete INDEX` +
 e.g. `delete 3`
-* *Edit* : `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]...` +
+* *Delete task* : `deletetask INDEX` +
+e.g. `deletetask 4`
+* *Edit* : `edit or e INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] c/[GOOGLE CALENDAR URL] [a/ADDRESS] [t/TAG]...` +
 e.g. `edit 2 n/James Lee e/jameslee@example.com`
-* *Find* : `find KEYWORD [MORE_KEYWORDS]` +
+* *Edit task* : `edittask INDEX [n/NAME] [d/DESCRIPTION] [t/DEADLINE] [p/PRIORITY]` +
+e.g. `edittask 2 p/veryhigh`
+* *Find person* : `find KEYWORD [MORE_KEYWORDS]` +
 e.g. `find James Jake`
-* *List* : `list`
+* *Find task* : `findtask KEYWORD [MORE_KEYWORDS] [p/PRIORITY]` +
+e.g. `findtask update p/high`
+* *List persons* : `list`
+* *List tasks* : `listtask`
 * *Help* : `help`
-* *Select* : `select INDEX` +
+* *Select person* : `select INDEX` +
 e.g.`select 2`
-* *Sort* : `sort FIELD ORDER` +
-e.g.`sort phone desc`
+* *Select task* : `selecttask INDEX` +
+e.g.`selecttask 2`
+* *Mark task as complete* : `markcomplete INDEX` +
+e.g. `markcomplete 4`
+* *Mark task as incomplete* : `markincomplete INDEX` +
+e.g. `markincomplete 5`
+* *Assign to task* : `assign TASKINDEX PERSONINDEX...` +
+e.g. `assign 4 1 17 18 21`
+* *Dismiss from task* : `dismiss TASKINDEX PERSONINDEX...` +
+e.g. `dismiss 4 1 17`
 * *History* : `history`
 * *Undo* : `undo`
 * *Redo* : `redo`
+
+== Keyboard Shortcuts
+
+* *Exit* : `ALT+F4`
+* *Help* : `F1`
+* *Open* : `CTRL+O`
+* *Save As* : `CTRL+S`
