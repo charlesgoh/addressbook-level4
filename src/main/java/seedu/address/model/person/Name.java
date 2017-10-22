@@ -20,6 +20,7 @@ public class Name {
     public static final String NAME_VALIDATION_REGEX = "[\\p{Alnum}][\\p{Alnum} ]*";
 
     public final String fullName;
+    private boolean isPrivate = false;
 
     /**
      * Validates given name.
@@ -35,6 +36,11 @@ public class Name {
         this.fullName = trimmedName;
     }
 
+    public Name(String name, boolean isPrivate) throws IllegalValueException {
+        this(name);
+        this.setPrivate(isPrivate);
+    }
+
     /**
      * Returns true if a given string is a valid person name.
      */
@@ -45,6 +51,9 @@ public class Name {
 
     @Override
     public String toString() {
+        if (isPrivate) {
+            return "<Private Name>";
+        }
         return fullName;
     }
 
@@ -60,4 +69,11 @@ public class Name {
         return fullName.hashCode();
     }
 
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean isPrivate) {
+        this.isPrivate = isPrivate;
+    }
 }
