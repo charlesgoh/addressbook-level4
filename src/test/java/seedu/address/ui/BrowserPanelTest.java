@@ -4,7 +4,10 @@ import static guitests.guihandles.WebViewUtil.waitUntilBrowserLoaded;
 import static org.junit.Assert.assertEquals;
 import static seedu.address.testutil.EventsUtil.postNow;
 import static seedu.address.testutil.TypicalPersons.ALICE;
+import static seedu.address.testutil.TypicalPersons.BOB;
 import static seedu.address.ui.BrowserPanel.DEFAULT_PAGE;
+import static seedu.address.ui.BrowserPanel.GOOGLE_MAPS_URL_PREFIX;
+import static seedu.address.ui.BrowserPanel.GOOGLE_MAPS_URL_SUFFIX;
 import static seedu.address.ui.BrowserPanel.GOOGLE_SEARCH_URL_PREFIX;
 import static seedu.address.ui.BrowserPanel.GOOGLE_SEARCH_URL_SUFFIX;
 import static seedu.address.ui.UiPart.FXML_FILE_FOLDER;
@@ -16,10 +19,12 @@ import org.junit.Test;
 
 import guitests.guihandles.BrowserPanelHandle;
 import seedu.address.MainApp;
+import seedu.address.commons.events.ui.BrowserPanelLocateEvent;
 import seedu.address.commons.events.ui.PersonPanelSelectionChangedEvent;
 
 public class BrowserPanelTest extends GuiUnitTest {
     private PersonPanelSelectionChangedEvent selectionChangedEventStub;
+    private BrowserPanelLocateEvent panelLocateEventStub;
 
     private BrowserPanel browserPanel;
     private BrowserPanelHandle browserPanelHandle;
@@ -27,7 +32,7 @@ public class BrowserPanelTest extends GuiUnitTest {
     @Before
     public void setUp() {
         selectionChangedEventStub = new PersonPanelSelectionChangedEvent(new PersonCard(ALICE, 0));
-
+        panelLocateEventStub = new BrowserPanelLocateEvent(BOB);
         guiRobot.interact(() -> browserPanel = new BrowserPanel());
         uiPartRule.setUiPart(browserPanel);
 
@@ -47,5 +52,13 @@ public class BrowserPanelTest extends GuiUnitTest {
 
         waitUntilBrowserLoaded(browserPanelHandle);
         assertEquals(expectedPersonUrl, browserPanelHandle.getLoadedUrl());
+
+        // google maps page of a person
+        postNow(panelLocateEventStub);
+        URL expectedMapUrl = new URL(GOOGLE_MAPS_URL_PREFIX
+                + BOB.getAddress().toString().replaceAll(" ", "+") + GOOGLE_MAPS_URL_SUFFIX);
+
+        waitUntilBrowserLoaded(browserPanelHandle);
+        assertEquals(expectedMapUrl, browserPanelHandle.getLoadedUrl());
     }
 }

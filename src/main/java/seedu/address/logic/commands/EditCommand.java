@@ -53,9 +53,13 @@ public class EditCommand extends UndoableCommand {
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: \n%1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
+    public static final String MESSAGE_ALL_FIELDS_PRIVATE = "At least one field to be edited must be public.";
+
+    private static boolean areFieldsAllPrivate = true;
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
+
 
     /**
      * @param index of the person in the filtered person list to edit
@@ -78,7 +82,12 @@ public class EditCommand extends UndoableCommand {
         }
 
         ReadOnlyPerson personToEdit = lastShownList.get(index.getZeroBased());
-        Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
+        Person editedPerson;
+        try {
+            editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
+        } catch (IllegalArgumentException e) {
+            throw new CommandException(MESSAGE_ALL_FIELDS_PRIVATE);
+        }
 
         try {
             model.updatePerson(personToEdit, editedPerson);
@@ -97,7 +106,8 @@ public class EditCommand extends UndoableCommand {
      * A person with private fields cannot be edited
      */
     private static Person createEditedPerson(ReadOnlyPerson personToEdit,
-                                             EditPersonDescriptor editPersonDescriptor) {
+                                             EditPersonDescriptor editPersonDescriptor)
+            throws IllegalArgumentException {
         assert personToEdit != null;
 
         Name updatedName;
@@ -105,41 +115,158 @@ public class EditCommand extends UndoableCommand {
         Email updatedEmail;
         Address updatedAddress;
         Remark updatedRemark;
+        Set<Tag> updatedTags;
+        Boolean updateFavourite;
 
+        areFieldsAllPrivate = true;
+        updatedName = createUpdatedName(personToEdit, editPersonDescriptor);
+
+        updatedPhone = createUpdatedPhone(personToEdit, editPersonDescriptor);
+
+        updatedEmail = createUpdatedEmail(personToEdit, editPersonDescriptor);
+
+        updatedAddress = createUpdatedAddress(personToEdit, editPersonDescriptor);
+
+        updatedRemark = createUpdatedRemark(personToEdit, editPersonDescriptor);
+
+        updatedTags = createUpdatedTags(personToEdit, editPersonDescriptor);
+
+        updateFavourite = createUpdatedFavourite(personToEdit, editPersonDescriptor);
+
+        if (areFieldsAllPrivate) {
+            throw new IllegalArgumentException();
+        }
+        return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress,
+                          updateFavourite, updatedRemark, updatedTags);
+    }
+
+    /**
+     * Creates an updated (@code Name) for use in createEditedPerson
+     * @param personToEdit The person to edit
+     * @param editPersonDescriptor Edited with this editPersonDescriptor
+     * @return A new (@code Name) from either the personToEdit or the editPersonDescriptor depending on privacy
+     */
+    private static Name createUpdatedName(ReadOnlyPerson personToEdit, EditPersonDescriptor editPersonDescriptor) {
+        Name updatedName;
         if (!personToEdit.getName().isPrivate()) {
             updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
+            if (editPersonDescriptor.getName().isPresent()) {
+                areFieldsAllPrivate = false;
+            }
         } else {
             updatedName = personToEdit.getName();
         }
+        return updatedName;
+    }
 
+    /**
+     * Creates an updated (@code Phone) for use in createEditedPerson
+     * @param personToEdit The person to edit
+     * @param editPersonDescriptor Edited with this editPersonDescriptor
+     * @return A new (@code Phone) from either the personToEdit or the editPersonDescriptor
+     * depending on privacy and the input
+     */
+    private static Phone createUpdatedPhone(ReadOnlyPerson personToEdit, EditPersonDescriptor editPersonDescriptor) {
+        Phone updatedPhone;
         if (!personToEdit.getPhone().isPrivate()) {
             updatedPhone = editPersonDescriptor.getPhone().orElse(personToEdit.getPhone());
+            if (editPersonDescriptor.getPhone().isPresent()) {
+                areFieldsAllPrivate = false;
+            }
         } else {
             updatedPhone = personToEdit.getPhone();
         }
+        return updatedPhone;
+    }
 
+    /**
+     * Creates an updated (@code Email) for use in createEditedPerson
+     * @param personToEdit The person to edit
+     * @param editPersonDescriptor Edited with this editPersonDescriptor
+     * @return A new (@code Email) from either the personToEdit or the editPersonDescriptor
+     * depending on privacy and the input
+     */
+    private static Email createUpdatedEmail(ReadOnlyPerson personToEdit, EditPersonDescriptor editPersonDescriptor) {
+        Email updatedEmail;
         if (!personToEdit.getEmail().isPrivate()) {
             updatedEmail = editPersonDescriptor.getEmail().orElse(personToEdit.getEmail());
+            if (editPersonDescriptor.getEmail().isPresent()) {
+                areFieldsAllPrivate = false;
+            }
         } else {
             updatedEmail = personToEdit.getEmail();
         }
+        return updatedEmail;
+    }
 
+    /**
+     * Creates an updated (@code Address) for use in createEditedPerson
+     * @param personToEdit The person to edit
+     * @param editPersonDescriptor Edited with this editPersonDescriptor
+     * @return A new (@code Address) from either the personToEdit or the editPersonDescriptor
+     * depending on privacy and the input
+     */
+    private static Address createUpdatedAddress(ReadOnlyPerson personToEdit,
+                                                EditPersonDescriptor editPersonDescriptor) {
+        Address updatedAddress;
         if (!personToEdit.getAddress().isPrivate()) {
             updatedAddress = editPersonDescriptor.getAddress().orElse(personToEdit.getAddress());
+            if (editPersonDescriptor.getAddress().isPresent()) {
+                areFieldsAllPrivate = false;
+            }
         } else {
             updatedAddress = personToEdit.getAddress();
         }
+        return updatedAddress;
+    }
 
+    /**
+     * Creates an updated (@code Remark) for use in createEditedPerson
+     * @param personToEdit The person to edit
+     * @param editPersonDescriptor Edited with this editPersonDescriptor
+     * @return A new (@code Remark) from either the personToEdit or the editPersonDescriptor
+     * depending on privacy and the input
+     */
+    private static Remark createUpdatedRemark(ReadOnlyPerson personToEdit, EditPersonDescriptor editPersonDescriptor) {
+        Remark updatedRemark;
         if (!personToEdit.getRemark().isPrivate()) {
             updatedRemark = editPersonDescriptor.getRemark().orElse(personToEdit.getRemark());
+            if (editPersonDescriptor.getRemark().isPresent()) {
+                areFieldsAllPrivate = false;
+            }
         } else {
             updatedRemark = personToEdit.getRemark();
         }
+        return updatedRemark;
+    }
 
+    /**
+     * Creates an updated (@code Tag) for use in createEditedPerson
+     * @param personToEdit The person to edit
+     * @param editPersonDescriptor Edited with this editPersonDescriptor
+     * @return A new (@code Tag) from either the personToEdit or the editPersonDescriptor depending on the input
+     */
+    private static Set<Tag> createUpdatedTags(ReadOnlyPerson personToEdit, EditPersonDescriptor editPersonDescriptor) {
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
+        if (editPersonDescriptor.getTags().isPresent()) {
+            areFieldsAllPrivate = false;
+        }
+        return updatedTags;
+    }
+
+    /**
+     * Creates an updated (@code Favourite) for use in createEditedPerson
+     * @param personToEdit The person to edit
+     * @param editPersonDescriptor Edited with this editPersonDescriptor
+     * @return A new (@code Favourite) from either the personToEdit or the editPersonDescriptor depending on the input
+     */
+    private static Boolean createUpdatedFavourite(ReadOnlyPerson personToEdit,
+                                                  EditPersonDescriptor editPersonDescriptor) {
         Boolean updateFavourite = editPersonDescriptor.getFavourite().orElse(personToEdit.getFavourite());
-        return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress,
-                          updateFavourite, updatedRemark, updatedTags);
+        if (editPersonDescriptor.getFavourite().isPresent()) {
+            areFieldsAllPrivate = false;
+        }
+        return updateFavourite;
     }
 
     @Override
