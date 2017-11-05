@@ -52,7 +52,7 @@ public class SortCommand extends UndoableCommand {
      * @param commandB
      */
     public boolean sameCommandAs(SortCommand commandB) {
-       return commandB.getList().equals(this.list) && commandB.getField()
+        return commandB.getList().equals(this.list) && commandB.getField()
                 .equals(this.field) && commandB.getOrder().equals(this.order);
     }
 

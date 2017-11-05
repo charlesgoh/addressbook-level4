@@ -16,6 +16,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Region;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.commons.events.ui.ChangeFontSizeEvent;
 import seedu.address.commons.events.ui.JumpToListRequestEvent;
 import seedu.address.commons.events.ui.TaskPanelSelectionChangedEvent;
 import seedu.address.model.task.ReadOnlyTask;
@@ -37,7 +38,7 @@ public class TaskListPanel extends UiPart<Region> {
     public TaskListPanel(ObservableList<ReadOnlyTask> taskList) {
         super(FXML);
         this.taskList = taskList;
-        fontSizeMultiplier = 0;
+        fontSizeMultiplier = MINIMUM_FONT_SIZE_MULTIPLIER;
         setConnections(taskList);
         registerAsAnEventHandler(this);
     }
@@ -66,7 +67,7 @@ public class TaskListPanel extends UiPart<Region> {
      */
     public void increaseFontSize() {
         logger.info("TaskListPanel: Increasing font sizes");
-        fontSizeMultiplier = Math.min(MAXIMUM_FONT_SIZE_MULTIPLIER, fontSizeMultiplier + 1);
+        setFontSizeMultiplier(fontSizeMultiplier + 1);
         setConnections(taskList);
     }
 
@@ -75,7 +76,7 @@ public class TaskListPanel extends UiPart<Region> {
      */
     public void decreaseFontSize() {
         logger.info("TaskListPanel: Decreasing font sizes");
-        fontSizeMultiplier = Math.max(MINIMUM_FONT_SIZE_MULTIPLIER, fontSizeMultiplier - 1);
+        setFontSizeMultiplier(fontSizeMultiplier - 1);
         setConnections(taskList);
     }
 
@@ -99,11 +100,41 @@ public class TaskListPanel extends UiPart<Region> {
      * Set integer value of font size multiplier
      */
     public void setFontSizeMultiplier(int fontSizeMultiplier) {
+        // Set new font size
+        this.fontSizeMultiplier = fontSizeMultiplier;
+
         // Restrict from minimum
-        this.fontSizeMultiplier = Math.max(MINIMUM_FONT_SIZE_MULTIPLIER, fontSizeMultiplier);
+        this.fontSizeMultiplier = Math.max(MINIMUM_FONT_SIZE_MULTIPLIER, this.fontSizeMultiplier);
 
         // Restrict from maximum
-        this.fontSizeMultiplier = Math.min(MAXIMUM_FONT_SIZE_MULTIPLIER, fontSizeMultiplier);
+        this.fontSizeMultiplier = Math.min(MAXIMUM_FONT_SIZE_MULTIPLIER, this.fontSizeMultiplier);
+
+        logger.info("New task font size multiplier: " + Integer.toString(this.fontSizeMultiplier));
+    }
+
+    /**
+     * Handles command induced change font size event for task cards
+     * @param event
+     */
+    @Subscribe
+    private void handleTaskCardChangeFontSizeEvent (ChangeFontSizeEvent event) {
+        logger.info(LogsCenter.getEventHandlingLogMessage(event));
+        switch (event.getTriggerOption()) {
+        case 0:
+            logger.info("Attempting to increase font size");
+            increaseFontSize();
+            break;
+        case 1:
+            decreaseFontSize();
+            logger.info("Attempting to decrease font size");
+            break;
+        case 2:
+            resetFontSize();
+            logger.info("Attempting to reset font size");
+            break;
+        default:
+            logger.info("Unable to handle change font size event. Stopping execution now");
+        }
     }
     //@@author
 

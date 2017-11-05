@@ -16,6 +16,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Region;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.commons.events.ui.ChangeFontSizeEvent;
 import seedu.address.commons.events.ui.JumpToListRequestEvent;
 import seedu.address.commons.events.ui.PersonPanelSelectionChangedEvent;
 import seedu.address.model.person.ReadOnlyPerson;
@@ -98,11 +99,41 @@ public class PersonListPanel extends UiPart<Region> {
      * Set integer value of font size multiplier
      */
     public void setFontSizeMultiplier(int fontSizeMultiplier) {
+        // Set new font size
+        this.fontSizeMultiplier = fontSizeMultiplier;
+
         // Restrict from minimum
-        this.fontSizeMultiplier = Math.max(MINIMUM_FONT_SIZE_MULTIPLIER, fontSizeMultiplier);
+        this.fontSizeMultiplier = Math.max(MINIMUM_FONT_SIZE_MULTIPLIER, this.fontSizeMultiplier);
 
         // Restrict from maximum
-        this.fontSizeMultiplier = Math.min(MAXIMUM_FONT_SIZE_MULTIPLIER, fontSizeMultiplier);
+        this.fontSizeMultiplier = Math.min(MAXIMUM_FONT_SIZE_MULTIPLIER, this.fontSizeMultiplier);
+
+        logger.info("New person font size multiplier: " + Integer.toString(this.fontSizeMultiplier));
+    }
+
+    /**
+     * Handles command induced change font size event for person cards
+     * @param event
+     */
+    @Subscribe
+    private void handlePersonCardChangeFontSizeEvent (ChangeFontSizeEvent event) {
+        logger.info(LogsCenter.getEventHandlingLogMessage(event));
+        switch (event.getTriggerOption()) {
+        case 0:
+            logger.info("Attempting to increase font size");
+            increaseFontSize();
+            break;
+        case 1:
+            decreaseFontSize();
+            logger.info("Attempting to decrease font size");
+            break;
+        case 2:
+            resetFontSize();
+            logger.info("Attempting to reset font size");
+            break;
+        default:
+            logger.info("Unable to handle change font size event. Stopping execution now");
+        }
     }
     //@@author
 
@@ -116,6 +147,10 @@ public class PersonListPanel extends UiPart<Region> {
         });
     }
 
+    /**
+     * Listens for change of font size events
+     * @param event
+     */
     @Subscribe
     private void handleJumpToListRequestEvent(JumpToListRequestEvent event) {
         logger.info(LogsCenter.getEventHandlingLogMessage(event));

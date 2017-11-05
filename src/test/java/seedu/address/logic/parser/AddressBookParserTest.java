@@ -380,27 +380,17 @@ public class AddressBookParserTest {
     //@@author
     //@@author charlesgoh
     @Test
-    public void parseSortCommand() throws Exception {
-        for (String listType: SortCommand.ACCEPTED_LIST_PARAMETERS) {
-            for (String fieldType: SortCommand.ACCEPTED_FIELD_PARAMETERS) {
-                for (String orderType: SortCommand.ACCEPTED_ORDER_PARAMETERS) {
-                    assertTrue(parser.parseCommand(SortCommand.COMMAND_WORD
-                            + " " + listType + " " + fieldType + " " + orderType) instanceof SortCommand);
-                }
-            }
-        }
+    public void parseSortCommandWord() throws Exception {
+        assertTrue(parser.parseCommand(SortCommand.COMMAND_WORD + " "
+                + SortCommand.ACCEPTED_LIST_PARAMETERS.get(0) + " " + SortCommand.ACCEPTED_FIELD_PARAMETERS.get(0)
+                + " " + SortCommand.ACCEPTED_ORDER_PARAMETERS.get(0)) instanceof SortCommand);
     }
 
     @Test
     public void parseSortCommandAlias() throws Exception {
-        for (String listType: SortCommand.ACCEPTED_LIST_PARAMETERS) {
-            for (String fieldType: SortCommand.ACCEPTED_FIELD_PARAMETERS) {
-                for (String orderType: SortCommand.ACCEPTED_ORDER_PARAMETERS) {
-                    assertTrue(parser.parseCommand(SortCommand.COMMAND_ALIAS
-                            + " " + listType + " " + fieldType + " " + orderType) instanceof SortCommand);
-                }
-            }
-        }
+        assertTrue(parser.parseCommand(SortCommand.COMMAND_ALIAS + " "
+                + SortCommand.ACCEPTED_LIST_PARAMETERS.get(0) + " " + SortCommand.ACCEPTED_FIELD_PARAMETERS.get(0)
+                + " " + SortCommand.ACCEPTED_ORDER_PARAMETERS.get(0)) instanceof SortCommand);
     }
 
     @Test

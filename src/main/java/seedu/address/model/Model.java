@@ -13,7 +13,6 @@ import seedu.address.model.tag.Tag;
 import seedu.address.model.task.ReadOnlyTask;
 import seedu.address.model.task.exceptions.DuplicateTaskException;
 import seedu.address.model.task.exceptions.TaskNotFoundException;
-import seedu.address.ui.MainWindow;
 
 /**
  * The API of the Model component.
@@ -126,26 +125,5 @@ public interface Model {
      * @param order
      */
     void sortTasks(String field, String order);
-
-    /**
-     * Sets main window attribute in model for use in various commands
-     * @param mainWindow
-     */
-    void setMainWindow(MainWindow mainWindow);
-
-    /**
-     * Model method for increasing font size. Passes control over to MainWindow
-     */
-    void increaseFontSize();
-
-    /**
-     * Model method for decreasing font size. Passes control over to MainWindow
-     */
-    void decreaseFontSize();
-
-    /**
-     * Model method for resetting font size. Passes control over to MainWindow
-     */
-    void resetFontSize();
     //@@author
 }

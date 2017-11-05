@@ -225,16 +225,20 @@ users to customize the application's font size quickly on the go.
 
 image::FontSizeUI.png[width="540"]
 
-There are two methods of calling changes in font size. The first way is through the UI. The Class Diagram for this
-procedure is shown below:
+There are two methods of calling changes in font size:
 
-image::FontSizeUMLViaUI.png[width="540"]
+1. `onAction` handlers are used to handle UI font size buttons. These handlers will post
+new events via `ComponentManager`.
 
-The other method of calling changes in font size is through a CLI command. When the relevant command is entered,
-the Command class calls MainWindow. The rest of the process flow is identical to that of the UI triggered font size
-command.
+2. CLI commands also post new events to handle font size changes, when the relevant command is entered (e.g. `fontsize increase`).
 
-image::FontSizeUMLViaCLI.png[width="700"]
+image::FontSizeChangeSequenceDiagram.png[width="700"]
+From the sequence diagram above, we can observe that the font size changes are handled by subscriber functions in PersonListPanel
+and TaskListPanel.
+
+[NOTE]
+The initial implementation required access to the model from the UI. This implementation was replaced with one that
+standardised the handling of font size change requests through events.
 
 ==== Design Considerations
 

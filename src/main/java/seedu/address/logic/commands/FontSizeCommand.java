@@ -5,13 +5,16 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import seedu.address.commons.core.EventsCenter;
+import seedu.address.commons.events.ui.ChangeFontSizeEvent;
+
 //@@author charlesgoh
 /**
  * Sorts all persons in address book by any field. Sorting can be done in ascending or descending order
  */
 public class FontSizeCommand extends Command {
     public static final int MINIMUM_FONT_SIZE_MULTIPLIER = 0;
-    public static final int MAXIMUM_FONT_SIZE_MULTIPLIER = 7;
+    public static final int MAXIMUM_FONT_SIZE_MULTIPLIER = 5;
     public static final String COMMAND_WORD = "fontsize";
     public static final String COMMAND_ALIAS = "fs";
     public static final String INCREASE_SIZE_PARAMETER = "increase";
@@ -46,13 +49,13 @@ public class FontSizeCommand extends Command {
 
         switch (option) {
         case INCREASE_SIZE_PARAMETER:
-            model.increaseFontSize();
+            EventsCenter.getInstance().post(new ChangeFontSizeEvent(ChangeFontSizeEvent.getIncreaseSizeEventIndex()));
             break;
         case DECREASE_SIZE_PARAMETER:
-            model.decreaseFontSize();
+            EventsCenter.getInstance().post(new ChangeFontSizeEvent(ChangeFontSizeEvent.getDecreaseSizeEventIndex()));
             break;
         case RESET_SIZE_PARAMETER:
-            model.resetFontSize();
+            EventsCenter.getInstance().post(new ChangeFontSizeEvent(ChangeFontSizeEvent.getResetSizeEventIndex()));
             break;
         default:
             System.err.println("Parameter is invalid");

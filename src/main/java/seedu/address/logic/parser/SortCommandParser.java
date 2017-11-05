@@ -5,7 +5,6 @@ import static seedu.address.logic.commands.SortCommand.ACCEPTED_FIELD_PARAMETERS
 import static seedu.address.logic.commands.SortCommand.ACCEPTED_LIST_PARAMETERS;
 import static seedu.address.logic.commands.SortCommand.MESSAGE_INVALID_INPUT;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import seedu.address.logic.commands.SortCommand;
@@ -48,8 +47,10 @@ public class SortCommandParser implements Parser<SortCommand> {
         }
 
         if (argKeywords.length != SIZE_OF_ARG_ARRAY
-                || (argKeywords[0].equals(ACCEPTED_LIST_PARAMETERS.get(0)) && TASK_FIELD_ARGS.contains(argKeywords[1]))
-                || (argKeywords[0].equals(ACCEPTED_LIST_PARAMETERS.get(1)) && PERSON_FIELD_ARGS.contains(argKeywords[1]))){
+                || (argKeywords[0].equals(ACCEPTED_LIST_PARAMETERS.get(0))
+                && TASK_FIELD_ARGS.contains(argKeywords[1]))
+                || (argKeywords[0].equals(ACCEPTED_LIST_PARAMETERS.get(1))
+                && PERSON_FIELD_ARGS.contains(argKeywords[1]))) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, SortCommand.MESSAGE_USAGE));
         }
 

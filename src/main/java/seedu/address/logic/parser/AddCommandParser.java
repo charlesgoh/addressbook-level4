@@ -83,26 +83,6 @@ public class AddCommandParser implements Parser<AddCommand> {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
         }
 
-        if (!(arePrefixesPresent(argMultimap, PREFIX_PHONE)
-                || (arePrefixesPresent(argMultimap, PREFIX_PHONE_PRIVATE)))) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
-        }
-
-        if (!(arePrefixesPresent(argMultimap, PREFIX_EMAIL)
-                || (arePrefixesPresent(argMultimap, PREFIX_EMAIL_PRIVATE)))) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
-        }
-
-        if (!(arePrefixesPresent(argMultimap, PREFIX_ADDRESS)
-                || (arePrefixesPresent(argMultimap, PREFIX_ADDRESS_PRIVATE)))) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
-        }
-
-        if (!(arePrefixesPresent(argMultimap, PREFIX_REMARK)
-                || (arePrefixesPresent(argMultimap, PREFIX_REMARK_PRIVATE)))) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
-        }
-
         try {
             Name name;
             Phone phone;
@@ -118,27 +98,36 @@ public class AddCommandParser implements Parser<AddCommand> {
 
             if ((arePrefixesPresent(argMultimap, PREFIX_PHONE))) {
                 phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE)).get();
-            } else {
+            } else if (arePrefixesPresent(argMultimap, PREFIX_PHONE_PRIVATE)) {
                 phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE_PRIVATE), true).get();
+            } else {
+                phone = new Phone(null);
             }
 
             if ((arePrefixesPresent(argMultimap, PREFIX_EMAIL))) {
                 email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL)).get();
-            } else {
+            } else if (arePrefixesPresent(argMultimap, PREFIX_EMAIL_PRIVATE)) {
                 email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL_PRIVATE), true).get();
+            } else {
+                email = new Email(null);
             }
 
             if ((arePrefixesPresent(argMultimap, PREFIX_ADDRESS))) {
                 address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS)).get();
-            } else {
+            } else if (arePrefixesPresent(argMultimap, PREFIX_ADDRESS_PRIVATE)) {
                 address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS_PRIVATE), true).get();
+            } else {
+                address = new Address(null);
             }
 
             if ((arePrefixesPresent(argMultimap, PREFIX_REMARK))) {
                 remark = ParserUtil.parseRemark(argMultimap.getValue(PREFIX_REMARK)).get();
-            } else {
+            } else if (arePrefixesPresent(argMultimap, PREFIX_REMARK_PRIVATE)) {
                 remark = ParserUtil.parseRemark(argMultimap.getValue(PREFIX_REMARK_PRIVATE), true).get();
+            } else {
+                remark = new Remark(null);
             }
+
             Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
             ReadOnlyPerson person = new Person(name, phone, email, address, false, remark, tagList);
             return person;
@@ -158,28 +147,27 @@ public class AddCommandParser implements Parser<AddCommand> {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_TASK_USAGE));
         }
 
-        if (!(arePrefixesPresent(argMultimap, PREFIX_DESCRIPTION))) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_TASK_USAGE));
-        }
-
-        if (!(arePrefixesPresent(argMultimap, PREFIX_DEADLINE))) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_TASK_USAGE));
-        }
-
-        if (!(arePrefixesPresent(argMultimap, PREFIX_PRIORITY))) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_TASK_USAGE));
-        }
-
         try {
             TaskName name;
             Description description;
             Deadline deadline;
             Priority priority;
 
-            name = ParserUtil.parseTaskName(argMultimap.getValue(PREFIX_NAME)).get();
-            description = ParserUtil.parseDescription(argMultimap.getValue(PREFIX_DESCRIPTION)).get();
-            deadline = ParserUtil.parseDeadline(argMultimap.getValue(PREFIX_DEADLINE)).get();
-            priority = ParserUtil.parsePriority(argMultimap.getValue(PREFIX_PRIORITY)).get();
+            name = arePrefixesPresent(argMultimap, PREFIX_NAME)
+                    ? ParserUtil.parseTaskName(argMultimap.getValue(PREFIX_NAME)).get()
+                    : new TaskName(null);
+
+            description = arePrefixesPresent(argMultimap, PREFIX_DESCRIPTION)
+                    ? ParserUtil.parseDescription(argMultimap.getValue(PREFIX_DESCRIPTION)).get()
+                    : new Description(null);
+
+            deadline = arePrefixesPresent(argMultimap, PREFIX_DEADLINE)
+                    ? ParserUtil.parseDeadline(argMultimap.getValue(PREFIX_DEADLINE)).get()
+                    : new Deadline(null);
+
+            priority = arePrefixesPresent(argMultimap, PREFIX_PRIORITY)
+                    ? ParserUtil.parsePriority(argMultimap.getValue(PREFIX_PRIORITY)).get()
+                    : new Priority(null);
 
 
             ReadOnlyTask task = new Task(name, description, deadline, priority);

@@ -2,15 +2,21 @@ package seedu.address.testutil;
 
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_CHRIS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_CHRIS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_FAVOURITE;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_CHRIS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_CHRIS;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_REMARK_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_REMARK_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_REMARK_CHRIS;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_CHRISTAG;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 
@@ -61,6 +67,16 @@ public class TypicalPersons {
             .withEmail(VALID_EMAIL_BOB).withAddress(VALID_ADDRESS_BOB)
             .withFavourite(VALID_FAVOURITE).withRemark(VALID_REMARK_BOB)
             .withTags(VALID_TAG_HUSBAND, VALID_TAG_FRIEND).build();
+    public static final ReadOnlyPerson CHRIS = new PersonBuilder().withName(VALID_NAME_CHRIS)
+            .withPhone(VALID_PHONE_CHRIS).withEmail(VALID_EMAIL_CHRIS)
+            .withAddress(VALID_ADDRESS_CHRIS).withFavourite(VALID_FAVOURITE)
+            .withRemark(VALID_REMARK_CHRIS)
+            .withTags(VALID_TAG_CHRISTAG).build();
+    public static final ReadOnlyPerson CHRIS_WITH_NEW_TAG = new PersonBuilder().withName(VALID_NAME_CHRIS)
+            .withPhone(VALID_PHONE_CHRIS)
+            .withEmail(VALID_EMAIL_CHRIS).withAddress(VALID_ADDRESS_CHRIS)
+            .withFavourite(VALID_FAVOURITE).withRemark(VALID_REMARK_CHRIS)
+            .withTags("friends").build();
 
     public static final String KEYWORD_MATCHING_MEIER = "Meier"; // A keyword that matches MEIER
 

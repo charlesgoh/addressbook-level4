@@ -361,6 +361,17 @@ Returns any task that has the word `update` in their names or descriptions
 * `find task update 4` +
 Returns all tasks that has the word `update` in their names or descriptions
 
+=== Listing all tags : `showtag` (Since V1.5)
+
+You can use the `showtag` command to quickly show all tags in the address book. This is a helper command for `findtag`+
+`showtag` can be replaced by `stag` for faster input. +
+Format: `showtag` +
+
+[NOTE]
+====
+`showtag` command: It will return an empty list if there is no tags in the address book.
+====
+
 === Locating persons by tag : `findtag` (Since V1.4)
 
 You can use the `findtag` command to quickly filter out contacts who match your criteria. For example, you may wish to find contacts who are your `classmates`. +
@@ -814,6 +825,7 @@ e.g. `find task update p/high`
 * *Help* : `help`
 * *List persons* : `list`
 * *List tasks* : `list task`
+* *List tags* : `showtag`
 * *Locate a person's address* : `locate`
 * *Select person* : `select INDEX` +
 e.g.`select 2`

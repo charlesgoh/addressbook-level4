@@ -60,10 +60,10 @@ public class NameContainsTagsPredicate implements Predicate<ReadOnlyPerson> {
 
     private void updateWantedTagUnwantedTag(List<String> wantedTag, List<String> unwantedTag) {
         for (String everyTag : tags) {
-            if (!everyTag.startsWith("/not")) {
+            if (!everyTag.startsWith("/")) {
                 wantedTag.add(everyTag);
             } else {
-                unwantedTag.add(everyTag.substring(4));
+                unwantedTag.add(everyTag.substring(1));
             }
         }
 

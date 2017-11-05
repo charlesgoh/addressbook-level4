@@ -22,6 +22,7 @@ import seedu.address.MainApp;
 import seedu.address.commons.core.Config;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.commons.events.ui.ChangeFontSizeEvent;
 import seedu.address.commons.events.ui.ExitAppRequestEvent;
 import seedu.address.commons.events.ui.OpenRequestEvent;
 import seedu.address.commons.events.ui.SaveAsRequestEvent;
@@ -291,8 +292,7 @@ public class MainWindow extends UiPart<Region> {
      */
     public void increaseFontSize() {
         logger.info("Handling increase in font size");
-        personListPanel.increaseFontSize();
-        taskListPanel.increaseFontSize();
+        raise(new ChangeFontSizeEvent(ChangeFontSizeEvent.getIncreaseSizeEventIndex()));
     }
 
     /**
@@ -317,7 +317,7 @@ public class MainWindow extends UiPart<Region> {
     public void decreaseFontSize() {
         logger.info("Handling increase in font size");
         personListPanel.decreaseFontSize();
-        taskListPanel.decreaseFontSize();
+        raise(new ChangeFontSizeEvent(ChangeFontSizeEvent.getDecreaseSizeEventIndex()));
     }
 
     /**
@@ -341,8 +341,7 @@ public class MainWindow extends UiPart<Region> {
      */
     public void resetFontSize() {
         logger.info("Handling reset in font size");
-        personListPanel.resetFontSize();
-        taskListPanel.resetFontSize();
+        raise(new ChangeFontSizeEvent(ChangeFontSizeEvent.getResetSizeEventIndex()));
     }
     //@@author
 
