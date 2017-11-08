@@ -51,7 +51,7 @@ public class SortCommandParserTest {
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, MESSAGE_USAGE));
 
     }
-
+    //@@author charlesgoh
     @Test
     public void parse_validArguments_success() throws ParseException {
         SortCommand expectedCommand;
@@ -75,5 +75,5 @@ public class SortCommandParserTest {
         actualCommand = parser.parse(list + " " + field + " " + order);
         assertEquals(true, expectedCommand.sameCommandAs(actualCommand));
     }
-    //@@author charlesgoh
+    //@@author
 }

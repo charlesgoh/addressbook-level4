@@ -17,7 +17,7 @@ import seedu.address.model.task.exceptions.DuplicateTaskException;
 import seedu.address.model.task.exceptions.TaskNotFoundException;
 
 /** Assigns at least 1 person to a specified task in the Address Book**/
-public class AssignCommand extends Command {
+public class AssignCommand extends UndoableCommand {
     public static final String COMMAND_WORD = "assign";
     public static final String COMMAND_ALIAS = "as";
 
@@ -41,7 +41,7 @@ public class AssignCommand extends Command {
     }
 
     @Override
-    public CommandResult execute() throws CommandException {
+    public CommandResult executeUndoableCommand() throws CommandException {
         List<ReadOnlyTask> tasksList = model.getFilteredTaskList();
         ArrayList<ReadOnlyPerson> personIndexes = createPersonsToAssign(this.personIndexes);
 

@@ -32,6 +32,7 @@ public class EditTaskDescriptorBuilder {
         descriptor.setDescription(task.getDescription());
         descriptor.setDeadline(task.getDeadline());
         descriptor.setPriority(task.getPriority());
+        descriptor.setTaskAddress(task.getTaskAddress());
     }
 
     /**
@@ -78,6 +79,18 @@ public class EditTaskDescriptorBuilder {
             ParserUtil.parsePriority(Optional.of(priority)).ifPresent(descriptor::setPriority);
         } catch (IllegalValueException ive) {
             throw new IllegalArgumentException("priority is expected to be unique.");
+        }
+        return this;
+    }
+
+    /**
+     * Sets the {@code TaskAddress} of the {@code EditTaskDescriptor} that we are building.
+     */
+    public EditTaskDescriptorBuilder withTaskAddress(String address) {
+        try {
+            ParserUtil.parseTaskAddress(Optional.of(address)).ifPresent(descriptor::setTaskAddress);
+        } catch (IllegalValueException ive) {
+            throw new IllegalArgumentException("address is expected to be unique.");
         }
         return this;
     }

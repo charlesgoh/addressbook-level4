@@ -76,24 +76,15 @@ public class XmlAddressBookStorage implements AddressBookStorage {
     }
 
     /**
-     * Backs up data to a remote location.
+     * Backs up data to a custom save file name
      * @param addressBook
      * @param filePath
      * @throws IOException
      */
     public void backupAddressBook(ReadOnlyAddressBook addressBook, String filePath) throws IOException {
         logger.fine("Attempting to write to backup data file in custom location");
+        logger.info(filePath);
         this.saveAddressBook(addressBook, filePath);
-    }
-
-    /**
-     * Default back up data which saves file in the same directory as the main save file
-     * @param addressBook
-     * @throws IOException
-     */
-    public void backupAddressBookDefault(ReadOnlyAddressBook addressBook) throws IOException {
-        logger.fine("Attempting to write to backup data file");
-        this.saveAddressBook(addressBook, filePath + "-backup.xml");
     }
 
     /**

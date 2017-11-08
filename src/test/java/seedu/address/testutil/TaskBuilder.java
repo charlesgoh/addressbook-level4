@@ -7,6 +7,7 @@ import seedu.address.model.task.Description;
 import seedu.address.model.task.Priority;
 import seedu.address.model.task.ReadOnlyTask;
 import seedu.address.model.task.Task;
+import seedu.address.model.task.TaskAddress;
 import seedu.address.model.task.TaskName;
 
 /**
@@ -18,6 +19,7 @@ public class TaskBuilder {
     public static final String DEFAULT_DESCRIPTION = "Buy a pencil from ABS by tomorrow";
     public static final String DEFAULT_DEADLINE = "04-04-2017";
     public static final String DEFAULT_PRIORITY = "4";
+    public static final String DEFAULT_ADDRESS = "12 Kent Ridge Crescent, 119275";
 
     private Task task;
 
@@ -29,8 +31,9 @@ public class TaskBuilder {
             Priority defaultPriority = new Priority(DEFAULT_PRIORITY);
             Assignees defaultAssignees = new Assignees();
             Boolean defaultState = false;
+            TaskAddress defaultAddress = new TaskAddress(DEFAULT_ADDRESS);
             this.task = new Task(defaultTaskName, defaultDescription, defaultDeadline, defaultPriority,
-                    defaultAssignees, defaultState);
+                    defaultAssignees, defaultState, defaultAddress);
         } catch (IllegalValueException ive) {
             throw new AssertionError("Default task's values are invalid.");
         }
@@ -96,6 +99,18 @@ public class TaskBuilder {
      */
     public TaskBuilder withState(boolean state) {
         this.task.setState(state);
+        return this;
+    }
+
+    /**
+     * Sets the {@code TaskAddress} of the {@code Task} that we are building.
+     */
+    public TaskBuilder withTaskAddress(String address) {
+        try {
+            this.task.setTaskAddress(new TaskAddress(address));
+        } catch (IllegalValueException ive) {
+            throw new IllegalArgumentException("address is expected to be unique.");
+        }
         return this;
     }
     public Task build() {

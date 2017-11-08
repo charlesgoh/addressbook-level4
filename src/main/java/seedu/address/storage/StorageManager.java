@@ -90,16 +90,6 @@ public class StorageManager extends ComponentManager implements Storage {
         logger.fine("Attempting to write to backup data file in custom location");
         this.saveAddressBook(addressBook, filePath);
     }
-
-    /**
-     * Default back up data which saves file in the same directory as the main save file
-     * @param addressBook
-     * @throws IOException
-     */
-    public void backupAddressBookDefault(ReadOnlyAddressBook addressBook) throws IOException {
-        logger.fine("Attempting to write to backup data file");
-        this.saveAddressBook(addressBook, addressBookStorage.getAddressBookFilePath() + "-backup.xml");
-    }
     //@@author
 
     @Override

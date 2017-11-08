@@ -2,8 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
@@ -13,18 +11,6 @@
 <?import javafx.scene.layout.VBox?>
 
 <HBox id="cardPane" fx:id="cardPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
-   <VBox alignment="CENTER">
-      <children>
-         <ImageView fx:id="avatarImage" fitHeight="105.0" fitWidth="105.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-               <Image url="@../../../../docs/images/Avatar.png" />
-            </image>
-         </ImageView>
-      </children>
-      <padding>
-         <Insets bottom="5.0" left="5.0" top="5.0" />
-      </padding>
-   </VBox>
   <GridPane HBox.hgrow="ALWAYS">
     <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10" prefWidth="150" />

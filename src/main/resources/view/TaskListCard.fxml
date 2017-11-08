@@ -32,6 +32,7 @@
             <Label fx:id="deadline" styleClass="cell_small_label" text="\$deadline" />
             <Label fx:id="priority" styleClass="cell_small_label" text="\$priority" />
             <Label fx:id="assignCount" styleClass="cell_small_label" text="\$count" />
+            <Label fx:id="taskAddress" styleClass="cell_small_label" text="\$count" />
         </VBox>
     </GridPane>
 </HBox>

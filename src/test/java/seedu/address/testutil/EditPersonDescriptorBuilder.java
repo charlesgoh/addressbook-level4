@@ -33,6 +33,7 @@ public class EditPersonDescriptorBuilder {
         descriptor.setEmail(person.getEmail());
         descriptor.setAddress(person.getAddress());
         descriptor.setRemark(person.getRemark());
+        descriptor.setAvatar(person.getAvatar());
         descriptor.setTags(person.getTags());
     }
 
@@ -84,6 +85,7 @@ public class EditPersonDescriptorBuilder {
         return this;
     }
 
+    //@@author charlesgoh
     /**
      * Sets the {@code Remark} of the {@code EditPersonDescriptor} that we are building.
      */
@@ -91,10 +93,23 @@ public class EditPersonDescriptorBuilder {
         try {
             ParserUtil.parseRemark(Optional.of(remark)).ifPresent(descriptor::setRemark);
         } catch (IllegalValueException ive) {
-            throw new IllegalArgumentException("address is expected to be unique.");
+            throw new IllegalArgumentException("remark is expected to be unique.");
         }
         return this;
     }
+
+    /**
+     * Sets the {@code Avatar} of the {@code EditPersonDescriptor} that we are building.
+     */
+    public EditPersonDescriptorBuilder withAvatar(String avatar) {
+        try {
+            ParserUtil.parseAvatar(Optional.of(avatar)).ifPresent(descriptor::setAvatar);
+        } catch (IllegalValueException ive) {
+            throw new IllegalArgumentException("avatar is expected to be unique.");
+        }
+        return this;
+    }
+    //@author
 
     /**
      * Parses the {@code tags} into a {@code Set<Tag>} and set it to the {@code EditPersonDescriptor}

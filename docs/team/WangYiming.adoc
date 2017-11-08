@@ -1,0 +1,58 @@
+= Wang Yiming - Project Portfolio
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+:imagesDir: ../images
+:stylesDir: ../stylesheets
+
+== Project: Address++
+Address++ is a desktop address book application used for storing contacts information. The user interacts with it using a CLI, and it has a GUI created with JavaFX. It is written in Java, and has about 10 kLoC.
+
+*Code contributed*: [https://github.com/CS2103AUG2017-W09-B2/main/blob/master/collated/main/wangyiming1019.md[Functional code]] [https://github.com/CS2103AUG2017-W09-B2/main/blob/master/collated/test/wangyiming1019.md[Test code]]
+
+=== Enhancement Added:
+*Add tag* +
+*Delete tag* +
+*Find person by tag* +
+*List tag* +
+*Favourite person* +
+*Unfavourite person* +
+*List favourite person* +
+
+==== External behavior
+
+---
+#Start of Extract [from: User Guide]#
+
+include::../UserGuide.adoc[tag=addtag]
+include::../UserGuide.adoc[tag=deletetag]
+include::../UserGuide.adoc[tag=showandfindtag]
+include::../UserGuide.adoc[tag=favourite]
+include::../UserGuide.adoc[tag=unfavourite]
+include::../UserGuide.adoc[tag=showfavourite]
+
+#End of Extract#
+
+---
+
+==== Justification
+
+
+
+==== Implementation
+
+---
+#Start of Extract [from: Developer Guide]#
+
+include::../DeveloperGuide.adoc[tag=adddeletetag]
+include::../DeveloperGuide.adoc[tag=findtag]
+
+#End of Extract#
+
+---
+
+=== Enhancement Proposed:
+
+=== Other contributions
+
+* Updated the tag color (Pull requests https://github.com/CS2103AUG2017-W09-B2/main/pull/33[#33], https://github.com/CS2103AUG2017-W09-B2/main/pull/76[#76])
+
+== Project: PowerPointLabs

@@ -1,5 +1,5 @@
 # charlesgoh-reused
-###### \java\seedu\address\ui\StatusBarFooter.java
+###### /java/seedu/address/ui/StatusBarFooter.java
 ``` java
 public class StatusBarFooter extends UiPart<Region> {
 

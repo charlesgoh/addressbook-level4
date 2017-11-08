@@ -17,7 +17,7 @@ public class BackupCommand extends Command {
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Backs up data to a user input "
             + "location field [FILEPATH]\n"
             + "Parameter: KEYWORD [FILEPATH]\n"
-            + "Example: " + COMMAND_WORD + " ~/Desktop";
+            + "Example: " + COMMAND_WORD + "MyBackUpFile";
 
     public static final String MESSAGE_INVALID_INPUT = "Invalid Input.\n";
 
@@ -25,7 +25,6 @@ public class BackupCommand extends Command {
 
     private String args;
 
-    //@@author charlesgoh
     public BackupCommand(String trimmedArgs) {
         super();
         this.args = trimmedArgs;
@@ -37,11 +36,7 @@ public class BackupCommand extends Command {
         requireNonNull(model.getAddressBook());
         requireNonNull(storage);
         try {
-            if (args.equals("")) {
-                storage.backupAddressBookDefault(model.getAddressBook());
-            } else {
-                storage.backupAddressBook(model.getAddressBook(), args);
-            }
+            storage.backupAddressBook(model.getAddressBook(), args);
         } catch (IOException e) {
             e.printStackTrace();
         }

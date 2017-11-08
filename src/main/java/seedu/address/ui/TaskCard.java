@@ -48,6 +48,8 @@ public class TaskCard  extends UiPart<Region> {
     private Label priority;
     @FXML
     private Label assignCount;
+    @FXML
+    private Label taskAddress;
 
     private int fontSizeMultipler;
 
@@ -70,6 +72,7 @@ public class TaskCard  extends UiPart<Region> {
         deadline.textProperty().bind(Bindings.convert(task.deadlineProperty()));
         priority.textProperty().bind(Bindings.convert(task.priorityProperty()));
         assignCount.textProperty().bind(Bindings.convert(task.assigneeProperty()));
+        taskAddress.textProperty().bind(Bindings.convert(task.taskAddressProperty()));
         state.textProperty().bind(Bindings.convert(task.stateProperty()));
     }
 
@@ -87,6 +90,7 @@ public class TaskCard  extends UiPart<Region> {
         description.setStyle("-fx-font-size: " + Integer.toString(attributeSize));
         deadline.setStyle("-fx-font-size: " + Integer.toString(attributeSize));
         priority.setStyle("-fx-font-size: " + Integer.toString(attributeSize));
+        taskAddress.setStyle("-fx-font-size: " + Integer.toString(attributeSize));
     }
     //@@author charlesgoh
 
@@ -126,6 +130,10 @@ public class TaskCard  extends UiPart<Region> {
 
     public Label getPriority() {
         return priority;
+    }
+
+    public Label getTaskAddress() {
+        return taskAddress;
     }
 
     public void setFontSizeMultiplier(int fontSizeMultipler) {

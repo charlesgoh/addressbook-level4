@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_AVATAR;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DEADLINE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
@@ -50,8 +51,8 @@ public class EditCommandParser implements Parser<EditCommand> {
     /** Constructs a new EditCommand that edits a Person object. **/
     private EditCommand constructPersonDescriptor(String args) throws ParseException {
         ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_REMARK,
-                            PREFIX_TAG);
+                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS,
+                        PREFIX_REMARK, PREFIX_AVATAR, PREFIX_TAG);
         Index index;
 
         try {
@@ -67,6 +68,7 @@ public class EditCommandParser implements Parser<EditCommand> {
             ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL)).ifPresent(editPersonDescriptor::setEmail);
             ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS)).ifPresent(editPersonDescriptor::setAddress);
             ParserUtil.parseRemark(argMultimap.getValue(PREFIX_REMARK)).ifPresent(editPersonDescriptor::setRemark);
+            ParserUtil.parseAvatar(argMultimap.getValue(PREFIX_AVATAR)).ifPresent(editPersonDescriptor::setAvatar);
             parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPersonDescriptor::setTags);
         } catch (IllegalValueException ive) {
             throw new ParseException(ive.getMessage(), ive);
@@ -84,7 +86,7 @@ public class EditCommandParser implements Parser<EditCommand> {
     private EditCommand constructTaskDescriptor(String args) throws ParseException {
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_TASK, PREFIX_NAME, PREFIX_DESCRIPTION,
-                        PREFIX_DEADLINE, PREFIX_PRIORITY);
+                        PREFIX_DEADLINE, PREFIX_PRIORITY, PREFIX_ADDRESS);
         Index index;
 
         try {
@@ -100,6 +102,8 @@ public class EditCommandParser implements Parser<EditCommand> {
                     .ifPresent(editTaskDescriptor::setDescription);
             ParserUtil.parseDeadline(argMultimap.getValue(PREFIX_DEADLINE)).ifPresent(editTaskDescriptor::setDeadline);
             ParserUtil.parsePriority(argMultimap.getValue(PREFIX_PRIORITY)).ifPresent(editTaskDescriptor::setPriority);
+            ParserUtil.parseTaskAddress(argMultimap.getValue(PREFIX_ADDRESS))
+                    .ifPresent(editTaskDescriptor::setTaskAddress);
         } catch (IllegalValueException ive) {
             throw new ParseException(ive.getMessage(), ive);
         }

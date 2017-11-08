@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PERSON;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TASK;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javafx.collections.ObservableList;
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.Prefix;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.ReadOnlyPerson;
@@ -102,6 +104,7 @@ public class AddressBook implements ReadOnlyAddressBook {
             if (type.equals(PREFIX_TASK)) {
                 setTasks(newData.getTasksList());
             } else if (type.equals(PREFIX_PERSON)) {
+                tasks.clearAssignees();
                 setPersons(newData.getPersonList());
                 setTags(new HashSet<>(newData.getTagList()));
                 syncMasterTagListWith(persons);
@@ -175,6 +178,14 @@ public class AddressBook implements ReadOnlyAddressBook {
     public void sortTasksBy(String field, String order) {
         tasks.sortBy(field, order);
     }
+
+    /**
+     * Returns an array list of {@code Index} corresponding to the index of {@code ReadOnlyPerson} specified
+     */
+    public ArrayList<Index> extractPersonIndexes(ArrayList<ReadOnlyPerson> personsToExtract) {
+        return persons.extractIndexes(personsToExtract);
+    }
+
     //@@author
     //@@author wangyiming1019
     /**
@@ -235,6 +246,14 @@ public class AddressBook implements ReadOnlyAddressBook {
         }
     }
 
+    /**
+     * Returns an array containing:
+     * Index - The old index of each person in the UniquePersonList
+     * Value - The new index of each person after a sort operation
+     */
+    public Index[] getMappings() {
+        return persons.getMappings();
+    }
     //// tag-level operations
 
     public void addTag(Tag t) throws UniqueTagList.DuplicateTagException {
@@ -267,6 +286,18 @@ public class AddressBook implements ReadOnlyAddressBook {
         }
     }
 
+    /** Removes the specified person from all assignment lists for every task **/
+    public void removePersonFromAssignees(Index target) {
+        tasks.removeAssignee(target);
+    }
+
+    /**
+     * Updates the Assignees for all tasks in the internal tasks list with their new mappings
+     */
+    public void updateTaskAssigneeMappings(Index[] mappings) {
+        tasks.updateAssignees(mappings);
+    }
+
     //@@author Esilocke
     /**
      * Replaces the given task {@code target} in the list with {@code editedReadOnlyTask}.
@@ -282,6 +313,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         Task editedTask = new Task(editedReadOnlyTask);
         tasks.setTask(target, editedTask);
     }
+    //@@author
     //// util methods
 
     @Override

@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_AVATAR;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DEADLINE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
@@ -35,13 +36,15 @@ public class AddCommand extends UndoableCommand {
             + PREFIX_EMAIL + "EMAIL "
             + PREFIX_ADDRESS + "ADDRESS "
             + PREFIX_REMARK + "REMARK "
+            + PREFIX_AVATAR + "AVATAR "
             + "[" + PREFIX_TAG + "TAG]...\n"
             + "Example: " + COMMAND_WORD + " "
             + PREFIX_NAME + "John Doe "
             + PREFIX_PHONE + "98765432 "
             + PREFIX_EMAIL + "johnd@example.com "
             + PREFIX_ADDRESS + "311, Clementi Ave 2, #02-25 "
-            + PREFIX_REMARK + "REMARK "
+            + PREFIX_REMARK + "Sells sea shells on the sea shore "
+            + PREFIX_AVATAR + "avatar-filepath.png"
             + PREFIX_TAG + "friends "
             + PREFIX_TAG + "owesMoney";
 
@@ -51,11 +54,13 @@ public class AddCommand extends UndoableCommand {
             + PREFIX_DESCRIPTION + "DESCRIPTION "
             + PREFIX_DEADLINE + "DEADLINE "
             + PREFIX_PRIORITY + "PRIORITY "
+            + PREFIX_ADDRESS + "ADDRESS"
             + "Example: " + COMMAND_WORD + " " + PREFIX_TASK + " "
             + PREFIX_NAME + "Buy pencil "
             + PREFIX_DESCRIPTION + "Buy a new pencil from ABS "
             + PREFIX_DEADLINE + "10-10-2017 "
-            + PREFIX_PRIORITY + "4 ";
+            + PREFIX_PRIORITY + "4 "
+            + PREFIX_ADDRESS + "12 Kent Ridge Crescent, 119275";
 
     public static final String MESSAGE_TASK_SUCCESS = "New task added: \n%1$s";
     public static final String MESSAGE_SUCCESS = "New person added: \n%1$s";

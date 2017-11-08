@@ -24,45 +24,63 @@ import seedu.address.logic.UndoRedoStack;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.person.ReadOnlyPerson;
 import seedu.address.model.task.ReadOnlyTask;
 //@@author Esilocke
 public class DismissCommandTest {
 
     private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
-    @Test
-    public void execute_dismissOnePerson_addSuccessful() throws Exception {
-        List<Index> toDismiss = Arrays.asList(INDEX_FIRST_PERSON);
-        ReadOnlyTask dismissedTask = model.getFilteredTaskList().get(0);
 
-        DismissCommand dismissCommand = prepareCommand(toDismiss, INDEX_FIRST_TASK);
+    @Test
+    public void execute_assignOnePerson_addSuccessful() throws Exception {
+        List<Index> toAssign = Arrays.asList(INDEX_FIRST_PERSON);
+        ReadOnlyTask dismissedTask = model.getFilteredTaskList().get(0);
+        ReadOnlyPerson dismissedPerson = model.getFilteredPersonList().get(0);
+        ArrayList<ReadOnlyPerson> persons = new ArrayList<>();
+        persons.add(dismissedPerson);
+
+        DismissCommand assignCommand = prepareCommand(toAssign, INDEX_FIRST_TASK);
         ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
-        String expectedMessage = String.format(DismissCommand.MESSAGE_SUCCESS, toDismiss.size(),
+        expectedModel.dismissFromTask(persons, dismissedTask);
+        String expectedMessage = String.format(DismissCommand.MESSAGE_SUCCESS, toAssign.size(),
                 dismissedTask);
-        assertCommandSuccess(dismissCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(assignCommand, model, expectedMessage, expectedModel);
     }
 
     @Test
-    public void execute_dismissManyPersons_addSuccessful() throws Exception {
-        List<Index> toDismiss = Arrays.asList(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON, INDEX_THIRD_PERSON);
+    public void execute_assignManyPersons_addSuccessful() throws Exception {
+        List<Index> toAssign = Arrays.asList(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON, INDEX_THIRD_PERSON);
         ReadOnlyTask dismissedTask = model.getFilteredTaskList().get(0);
+        ReadOnlyPerson firstPerson = model.getFilteredPersonList().get(0);
+        ReadOnlyPerson secondPerson = model.getFilteredPersonList().get(1);
+        ReadOnlyPerson thirdPerson = model.getFilteredPersonList().get(2);
+        ArrayList<ReadOnlyPerson> persons = new ArrayList<>();
+        persons.add(firstPerson);
+        persons.add(secondPerson);
+        persons.add(thirdPerson);
 
-        DismissCommand dismissCommand = prepareCommand(toDismiss, INDEX_FIRST_TASK);
+        DismissCommand assignCommand = prepareCommand(toAssign, INDEX_FIRST_TASK);
         ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
-        String expectedMessage = String.format(DismissCommand.MESSAGE_SUCCESS, toDismiss.size(),
+        expectedModel.dismissFromTask(persons, dismissedTask);
+        String expectedMessage = String.format(DismissCommand.MESSAGE_SUCCESS, toAssign.size(),
                 dismissedTask);
-        assertCommandSuccess(dismissCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(assignCommand, model, expectedMessage, expectedModel);
     }
 
     @Test
-    public void execute_dismissDuplicates_addSuccessful() throws Exception {
-        List<Index> toDismiss = Arrays.asList(INDEX_FIRST_PERSON, INDEX_FIRST_PERSON, INDEX_FIRST_PERSON);
+    public void execute_assignDuplicates_addSuccessful() throws Exception {
+        List<Index> toAssign = Arrays.asList(INDEX_FIRST_PERSON, INDEX_FIRST_PERSON, INDEX_FIRST_PERSON);
         ReadOnlyTask dismissedTask = model.getFilteredTaskList().get(0);
+        ReadOnlyPerson dismissedPerson = model.getFilteredPersonList().get(0);
+        ArrayList<ReadOnlyPerson> persons = new ArrayList<>();
+        persons.add(dismissedPerson);
 
-        DismissCommand dismissCommand = prepareCommand(toDismiss, INDEX_FIRST_TASK);
+        DismissCommand assignCommand = prepareCommand(toAssign, INDEX_FIRST_TASK);
         ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         String expectedMessage = String.format(DismissCommand.MESSAGE_SUCCESS, 1, dismissedTask);
-        assertCommandSuccess(dismissCommand, model, expectedMessage, expectedModel);
+        expectedModel.dismissFromTask(persons, dismissedTask);
+        assertCommandSuccess(assignCommand, model, expectedMessage, expectedModel);
     }
 
     @Test

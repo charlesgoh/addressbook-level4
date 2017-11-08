@@ -27,6 +27,7 @@ public class PersonPrivacySettingsBuilder {
         pps.setPhoneIsPrivate(person.getPhone().isPrivate());
         pps.setEmailIsPrivate(person.getEmail().isPrivate());
         pps.setAddressIsPrivate(person.getAddress().isPrivate());
+        pps.setRemarkIsPrivate(person.getRemark().isPrivate());
     }
 
     /**
@@ -81,6 +82,20 @@ public class PersonPrivacySettingsBuilder {
             pps.setAddressIsPrivate(false);
         } else {
             throw new IllegalArgumentException("Privacy of address should be true or false");
+        }
+        return this;
+    }
+
+    /**
+     * Sets the {@code remarkIsPrivate} of the {@code PersonPrivacySettings} that we are building.
+     */
+    public PersonPrivacySettingsBuilder setRemarkPrivate(String remark) {
+        if (remark.equals("Optional[true]") || remark.equals("true")) {
+            pps.setRemarkIsPrivate(true);
+        } else if (remark.equals("Optional[false]") || remark.equals("false")) {
+            pps.setRemarkIsPrivate(false);
+        } else {
+            throw new IllegalArgumentException("Privacy of remark should be true or false");
         }
         return this;
     }

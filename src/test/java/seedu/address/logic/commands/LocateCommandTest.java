@@ -98,7 +98,7 @@ public class LocateCommandTest {
     }
 
     /**
-     * Executes a {@code LocateCommand} with the given {@code index}, and checks that {@code JumpToListRequestEvent}
+     * Executes a {@code LocateCommand} with the given {@code index}, and checks that {@code BrowserPanelLocateEvent}
      * is raised with the correct index.
      */
     private void assertExecutionSuccess(Index index) {

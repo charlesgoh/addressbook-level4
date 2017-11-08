@@ -12,7 +12,7 @@ import seedu.address.model.task.exceptions.TaskNotFoundException;
 //@@author Esilocke
 
 /** Marks the specified {@Code task} as complete */
-public class SetCompleteCommand extends Command {
+public class SetCompleteCommand extends UndoableCommand {
     public static final String COMMAND_WORD = "setcomplete";
     public static final String COMMAND_ALIAS = "stc";
 
@@ -31,7 +31,7 @@ public class SetCompleteCommand extends Command {
     }
 
     @Override
-    public CommandResult execute() throws CommandException {
+    public CommandResult executeUndoableCommand() throws CommandException {
 
         List<ReadOnlyTask> lastShownList = model.getFilteredTaskList();
 

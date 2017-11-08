@@ -3,6 +3,7 @@ package seedu.address.logic.commands;
 //@@author jeffreygohkw
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_AVATAR;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
@@ -13,9 +14,11 @@ import java.util.Set;
 
 import seedu.address.commons.core.Messages;
 import seedu.address.commons.core.index.Index;
+import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.Avatar;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
@@ -43,11 +46,13 @@ public class ChangePrivacyCommand extends UndoableCommand {
             + "[" + PREFIX_PHONE + TRUE_WORD + " OR " + FALSE_WORD + "]"
             + "[" + PREFIX_EMAIL + TRUE_WORD + " OR " + FALSE_WORD + "]"
             + "[" + PREFIX_ADDRESS + TRUE_WORD + " OR " + FALSE_WORD + "]\n"
+            + "[" + PREFIX_AVATAR + TRUE_WORD + " OR " + FALSE_WORD + "]\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_NAME + TRUE_WORD + " "
             + PREFIX_PHONE + FALSE_WORD + " "
             + PREFIX_EMAIL + TRUE_WORD + " "
-            + PREFIX_ADDRESS + FALSE_WORD;
+            + PREFIX_ADDRESS + FALSE_WORD + " "
+            + PREFIX_AVATAR + FALSE_WORD;
 
     public static final String MESSAGE_CHANGE_PRIVACY_SUCCESS = "Changed the Privacy of the Person: %1$s";
     public static final String MESSAGE_NO_FIELDS = "At least one field to change must be provided.";
@@ -77,17 +82,22 @@ public class ChangePrivacyCommand extends UndoableCommand {
 
         ReadOnlyPerson personToChange = lastShownList.get(index.getZeroBased());
 
-        Person newPerson = createPersonWithChangedPrivacy(personToChange, pps);
+        Person newPerson = null;
+        try {
+            newPerson = createPersonWithChangedPrivacy(personToChange, pps);
+        } catch (IllegalValueException e) {
+            throw new AssertionError("Person must have all fields initialised.");
+        }
 
         try {
             model.updatePerson(personToChange, newPerson);
+            model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         } catch (DuplicatePersonException dpe) {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         } catch (PersonNotFoundException pnfe) {
             throw new AssertionError("The target person cannot be missing");
         }
 
-        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         return new CommandResult(String.format(MESSAGE_CHANGE_PRIVACY_SUCCESS, newPerson));
     }
 
@@ -96,38 +106,169 @@ public class ChangePrivacyCommand extends UndoableCommand {
      * @param person the person whose privacy we would like to change
      * @param pps the settings of privacy for each field
      */
-    private static Person createPersonWithChangedPrivacy(ReadOnlyPerson person, PersonPrivacySettings pps) {
+    private static Person createPersonWithChangedPrivacy(ReadOnlyPerson person, PersonPrivacySettings pps)
+            throws IllegalValueException {
         assert person != null;
 
-        Name n = person.getName();
-        Phone p = person.getPhone();
-        Email e = person.getEmail();
-        Address a = person.getAddress();
-        Remark r = person.getRemark();
-        Boolean f = person.getFavourite();
-        Set<Tag> t = person.getTags();
+        Name name = createNameWithPrivacy(person, pps);
+        Phone phone = createPhoneWithPrivacy(person, pps);
+        Email email = createEmailWithPrivacy(person, pps);
+        Address address = createAddressWithPrivacy(person, pps);
+        Remark remark = createRemarkWithPrivacy(person, pps);
+        Avatar avatar = createAvatarWithPrivacy(person, pps);
+        Boolean favourite = person.getFavourite();
+        Set<Tag> tag = person.getTags();
 
+        return new Person(name, phone, email, address, favourite, remark, avatar, tag);
+    }
+
+    /**
+     * Creates a new (@code Name) based on the input (@code Person) and (@code PersonPrivacySettings)
+     * @return A (@code Name) with the same value as that of the (@code Person)'s but with the privacy set to that
+     * of the (@code PersonPrivacySettings)
+     */
+    private static Name createNameWithPrivacy(ReadOnlyPerson person, PersonPrivacySettings pps) {
+        Name n;
+        try {
+            if (person.getName().isPrivate()) {
+                person.getName().setPrivate(false);
+                n = new Name(person.getName().toString());
+                person.getName().setPrivate(true);
+            } else {
+                n = new Name(person.getName().toString());
+            }
+        } catch (IllegalValueException e) {
+            throw new AssertionError("Invalid Name");
+        }
         if (pps.getNameIsPrivate() != null) {
             n.setPrivate(pps.getNameIsPrivate());
+        }
+        return n;
+    }
+
+
+    /**
+     * Creates a new (@code Phone) based on the input (@code Person) and (@code PersonPrivacySettings)
+     * @return A (@code Phone) with the same value as that of the (@code Person)'s but with the privacy set to that
+     * of the (@code PersonPrivacySettings)
+     */
+    private static Phone createPhoneWithPrivacy(ReadOnlyPerson person, PersonPrivacySettings pps) {
+        Phone p;
+        try {
+            if (person.getPhone().isPrivate()) {
+                person.getPhone().setPrivate(false);
+                p = new Phone(person.getPhone().toString());
+                person.getPhone().setPrivate(true);
+            } else {
+                p = new Phone(person.getPhone().toString());
+            }
+        } catch (IllegalValueException e) {
+            throw new AssertionError("Invalid Phone");
         }
         if (pps.getPhoneIsPrivate() != null) {
             p.setPrivate(pps.getPhoneIsPrivate());
         }
+        return p;
+    }
 
-        if (pps.getEmailIsPrivate() != null) {
-            e.setPrivate(pps.getEmailIsPrivate());
+
+    /**
+     * Creates a new (@code Email) based on the input (@code Person) and (@code PersonPrivacySettings)
+     * @return A (@code Email) with the same value as that of the (@code Person)'s but with the privacy set to that
+     * of the (@code PersonPrivacySettings)
+     */
+    private static Email createEmailWithPrivacy(ReadOnlyPerson person, PersonPrivacySettings pps) {
+        Email em;
+        try {
+            if (person.getEmail().isPrivate()) {
+                person.getEmail().setPrivate(false);
+                em = new Email(person.getEmail().toString());
+                person.getEmail().setPrivate(true);
+            } else {
+                em = new Email(person.getEmail().toString());
+            }
+        } catch (IllegalValueException e) {
+            throw new AssertionError("Invalid Email");
         }
+        if (pps.getEmailIsPrivate() != null) {
+            em.setPrivate(pps.getEmailIsPrivate());
+        }
+        return em;
+    }
 
+    /**
+     * Creates a new (@code Address) based on the input (@code Person) and (@code PersonPrivacySettings)
+     * @return A (@code Address) with the same value as that of the (@code Person)'s but with the privacy set to that
+     * of the (@code PersonPrivacySettings)
+     */
+    private static Address createAddressWithPrivacy(ReadOnlyPerson person, PersonPrivacySettings pps) {
+        Address a;
+        try {
+            if (person.getAddress().isPrivate()) {
+                person.getAddress().setPrivate(false);
+                a = new Address(person.getAddress().toString());
+                person.getAddress().setPrivate(true);
+            } else {
+                a = new Address(person.getAddress().toString());
+            }
+        } catch (IllegalValueException e) {
+            throw new AssertionError("Invalid Address");
+        }
         if (pps.getAddressIsPrivate() != null) {
             a.setPrivate(pps.getAddressIsPrivate());
         }
+        return a;
+    }
 
+    /**
+     * Creates a new (@code Remark) based on the input (@code Person) and (@code PersonPrivacySettings)
+     * @return A (@code Remark) with the same value as that of the (@code Person)'s but with the privacy set to that
+     * of the (@code PersonPrivacySettings)
+     */
+    private static Remark createRemarkWithPrivacy(ReadOnlyPerson person, PersonPrivacySettings pps) {
+        Remark r;
+        try {
+            if (person.getRemark().isPrivate()) {
+                person.getRemark().setPrivate(false);
+                r = new Remark(person.getRemark().toString());
+                person.getRemark().setPrivate(true);
+            } else {
+                r = new Remark(person.getRemark().toString());
+            }
+        } catch (IllegalValueException e) {
+            throw new AssertionError("Invalid Remark");
+        }
         if (pps.getRemarkIsPrivate() != null) {
             r.setPrivate(pps.getRemarkIsPrivate());
         }
-
-        return new Person(n, p, e, a, f, r, t);
+        return r;
     }
+
+    //@@author charlesgoh
+    /**
+     * Creates a new (@code Avatar) based on the input (@code Person) and (@code PersonPrivacySettings)
+     * @return A (@code Avatar) with the same value as that of the (@code Person)'s but with the privacy set to that
+     * of the (@code PersonPrivacySettings)
+     */
+    private static Avatar createAvatarWithPrivacy(ReadOnlyPerson person, PersonPrivacySettings pps) {
+        Avatar v;
+        try {
+            if (person.getAvatar().isPrivate()) {
+                person.getAvatar().setPrivate(false);
+                v = new Avatar(person.getAvatar().toString());
+                person.getAvatar().setPrivate(true);
+            } else {
+                v = new Avatar(person.getAvatar().toString());
+            }
+        } catch (IllegalValueException e) {
+            throw new AssertionError("Invalid Avatar");
+        }
+        if (pps.getAvatarIsPrivate() != null) {
+            v.setPrivate(pps.getAvatarIsPrivate());
+        }
+        return v;
+    }
+    //@@author
 
     public Index getIndex() {
         return index;
@@ -164,6 +305,7 @@ public class ChangePrivacyCommand extends UndoableCommand {
         private Boolean emailIsPrivate;
         private Boolean addressIsPrivate;
         private Boolean remarkIsPrivate;
+        private Boolean avatarIsPrivate;
 
         public PersonPrivacySettings() {}
 
@@ -173,6 +315,7 @@ public class ChangePrivacyCommand extends UndoableCommand {
             this.emailIsPrivate = toCopy.emailIsPrivate;
             this.addressIsPrivate = toCopy.addressIsPrivate;
             this.remarkIsPrivate = toCopy.remarkIsPrivate;
+            this.avatarIsPrivate = toCopy.avatarIsPrivate;
         }
 
         /**
@@ -180,7 +323,7 @@ public class ChangePrivacyCommand extends UndoableCommand {
          */
         public boolean isAnyFieldNonNull() {
             return CollectionUtil.isAnyNonNull(this.nameIsPrivate, this.phoneIsPrivate,
-                    this.emailIsPrivate, this.addressIsPrivate, this.remarkIsPrivate);
+                    this.emailIsPrivate, this.addressIsPrivate, this.remarkIsPrivate, this.avatarIsPrivate);
         }
 
         /**
@@ -234,7 +377,7 @@ public class ChangePrivacyCommand extends UndoableCommand {
             requireNonNull(addressIsPrivate);
             this.addressIsPrivate = addressIsPrivate;
         }
-
+        //@@author charlesgoh
         /**
          * Returns the value of remarkIsPrivate
          * @return the value of remarkIsPrivate
@@ -247,6 +390,20 @@ public class ChangePrivacyCommand extends UndoableCommand {
             requireNonNull(remarkIsPrivate);
             this.remarkIsPrivate = remarkIsPrivate;
         }
+
+        /**
+         * Returns the value of avatarIsPrivate
+         * @return the value of avatarIsPrivate
+         */
+        public Boolean getAvatarIsPrivate() {
+            return avatarIsPrivate;
+        }
+
+        public void setAvatarIsPrivate(boolean avatarIsPrivate) {
+            requireNonNull(avatarIsPrivate);
+            this.avatarIsPrivate = avatarIsPrivate;
+        }
+        //@@author
 
         @Override
         public boolean equals(Object other) {
@@ -267,7 +424,8 @@ public class ChangePrivacyCommand extends UndoableCommand {
                     && getPhoneIsPrivate().equals(c.getPhoneIsPrivate())
                     && getEmailIsPrivate().equals(c.getEmailIsPrivate())
                     && getAddressIsPrivate().equals(c.getAddressIsPrivate())
-                    && getRemarkIsPrivate().equals(c.getRemarkIsPrivate());
+                    && getRemarkIsPrivate().equals(c.getRemarkIsPrivate())
+                    && getAvatarIsPrivate().equals(c.getAvatarIsPrivate());
         }
     }
 }

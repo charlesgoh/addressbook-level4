@@ -6,7 +6,6 @@ import seedu.address.logic.UndoRedoStack;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.storage.Storage;
-import seedu.address.ui.MainWindow;
 
 /**
  * Represents a command with hidden internal logic and the ability to be executed.
@@ -14,7 +13,6 @@ import seedu.address.ui.MainWindow;
 public abstract class Command {
     protected Model model;
     protected Storage storage;
-    protected MainWindow mainWindow;
     protected CommandHistory history;
     protected UndoRedoStack undoRedoStack;
 

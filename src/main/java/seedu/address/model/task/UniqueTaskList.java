@@ -12,6 +12,7 @@ import org.fxmisc.easybind.EasyBind;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.model.task.exceptions.DuplicateTaskException;
 import seedu.address.model.task.exceptions.TaskNotFoundException;
@@ -100,6 +101,57 @@ public class UniqueTaskList implements Iterable<Task> {
         setTasks(replacement);
     }
 
+    /**
+     * Removes all assignees from all tasks.
+     */
+    public void clearAssignees() {
+        for (Task t : internalList) {
+            t.clearAssignees();
+        }
+    }
+
+    /** Removes the specified assignee from all tasks **/
+    public void removeAssignee(Index personIndex) {
+        ObservableList<Task> internalListCopy = FXCollections.observableArrayList();
+        for (Task t : internalList) {
+            TaskName name = t.getTaskName();
+            Description description = t.getDescription();
+            Deadline deadline = t.getDeadline();
+            Priority priority = t.getPriority();
+            TaskAddress taskAddress = t.getTaskAddress();
+            boolean state = t.getCompleteState();
+            Assignees assignees = t.getAssignees();
+
+            Assignees updated = new Assignees(assignees);
+            updated.decrementIndex(personIndex);
+            internalListCopy.add(new Task(name, description, deadline, priority, updated, state, taskAddress));
+        }
+        internalList.clear();
+        internalList.addAll(internalListCopy);
+    }
+
+    /**
+     * Updates the assignee list within each task to match that of the newPersonIndexes.
+     * This method is called after a sort persons operation due to the order change
+     */
+    public void updateAssignees(Index[] newPersonIndexes) {
+        ObservableList<Task> internalListCopy = FXCollections.observableArrayList();
+        for (Task t : internalList) {
+            TaskName name = t.getTaskName();
+            Description description = t.getDescription();
+            Deadline deadline = t.getDeadline();
+            Priority priority = t.getPriority();
+            TaskAddress taskAddress = t.getTaskAddress();
+            boolean state = t.getCompleteState();
+            Assignees assignees = t.getAssignees();
+
+            Assignees updated = new Assignees(assignees);
+            updated.updateList(newPersonIndexes);
+            internalListCopy.add(new Task(name, description, deadline, priority, updated, state, taskAddress));
+        }
+        internalList.clear();
+        internalList.addAll(internalListCopy);
+    }
     /**
      * Returns the backing list as an unmodifiable {@code ObservableList}.
      */

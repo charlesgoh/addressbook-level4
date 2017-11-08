@@ -9,7 +9,6 @@ import com.google.common.eventbus.Subscribe;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
@@ -22,16 +21,22 @@ import seedu.address.MainApp;
 import seedu.address.commons.core.Config;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.commons.events.model.TaskStateChangeEvent;
+import seedu.address.commons.events.ui.BrowserPanelLocateEvent;
 import seedu.address.commons.events.ui.ChangeFontSizeEvent;
 import seedu.address.commons.events.ui.ExitAppRequestEvent;
 import seedu.address.commons.events.ui.OpenRequestEvent;
+import seedu.address.commons.events.ui.PersonPanelSelectionChangedEvent;
 import seedu.address.commons.events.ui.SaveAsRequestEvent;
 import seedu.address.commons.events.ui.ShowHelpRequestEvent;
+import seedu.address.commons.events.ui.TaskPanelSelectionChangedEvent;
 import seedu.address.commons.exceptions.DataConversionException;
 import seedu.address.commons.util.FxViewUtil;
 import seedu.address.logic.Logic;
 import seedu.address.model.Model;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.task.exceptions.DuplicateTaskException;
+import seedu.address.model.task.exceptions.TaskNotFoundException;
 import seedu.address.storage.Storage;
 import seedu.address.storage.XmlFileStorage;
 
@@ -62,6 +67,8 @@ public class MainWindow extends UiPart<Region> {
     private TaskListPanel taskListPanel;
     private Config config;
     private UserPrefs prefs;
+    private ViewTaskPanel viewTaskPanel;
+    private ViewPersonPanel viewPersonPanel;
 
     @FXML
     private StackPane browserPlaceholder;
@@ -89,15 +96,6 @@ public class MainWindow extends UiPart<Region> {
 
     @FXML
     private MenuItem resetSizeMenuItem;
-
-    @FXML
-    private Button increaseFontSizeButton;
-
-    @FXML
-    private Button decreaseFontSizeButton;
-
-    @FXML
-    private Button resetFontSizeButton;
 
     @FXML
     private StackPane personListPanelPlaceholder;
@@ -210,6 +208,8 @@ public class MainWindow extends UiPart<Region> {
      */
     void fillInnerParts() {
         browserPanel = new BrowserPanel();
+        viewTaskPanel = new ViewTaskPanel();
+        viewPersonPanel = new ViewPersonPanel();
         browserPlaceholder.getChildren().add(browserPanel.getRoot());
 
         personListPanel = new PersonListPanel(logic.getFilteredPersonList());
@@ -276,21 +276,6 @@ public class MainWindow extends UiPart<Region> {
      */
     @FXML
     public void handleIncreaseFontSize() {
-        increaseFontSize();
-    }
-
-    /**
-     * Handle increase font size command for button
-     */
-    @FXML
-    public void handleIncreaseFontSizeButton() {
-        increaseFontSize();
-    }
-
-    /**
-     * Calls method to increase font size
-     */
-    public void increaseFontSize() {
         logger.info("Handling increase in font size");
         raise(new ChangeFontSizeEvent(ChangeFontSizeEvent.getIncreaseSizeEventIndex()));
     }
@@ -300,23 +285,7 @@ public class MainWindow extends UiPart<Region> {
      */
     @FXML
     public void handleDecreaseFontSize() {
-        decreaseFontSize();
-    }
-
-    /**
-     * Handle decrease font size command for button
-     */
-    @FXML
-    public void handleDecreaseFontSizeButton() {
-        decreaseFontSize();
-    }
-
-    /**
-     * Calls method to decrease font size
-     */
-    public void decreaseFontSize() {
-        logger.info("Handling increase in font size");
-        personListPanel.decreaseFontSize();
+        logger.info("Handling decrease in font size");
         raise(new ChangeFontSizeEvent(ChangeFontSizeEvent.getDecreaseSizeEventIndex()));
     }
 
@@ -325,21 +294,6 @@ public class MainWindow extends UiPart<Region> {
      */
     @FXML
     public void handleResetFontSize() {
-        resetFontSize();
-    }
-
-    /**
-     * Handle reset font size command for button
-     */
-    @FXML
-    public void handleResetFontSizeButton() {
-        resetFontSize();
-    }
-
-    /**
-     * Calls method to reset font size
-     */
-    public void resetFontSize() {
         logger.info("Handling reset in font size");
         raise(new ChangeFontSizeEvent(ChangeFontSizeEvent.getResetSizeEventIndex()));
     }
@@ -433,5 +387,39 @@ public class MainWindow extends UiPart<Region> {
     private void handleShowHelpEvent(ShowHelpRequestEvent event) {
         logger.info(LogsCenter.getEventHandlingLogMessage(event));
         handleHelp();
+    }
+
+    @Subscribe
+    private void handleTaskPanelSelectionChangedEvent(TaskPanelSelectionChangedEvent event) {
+        logger.info(LogsCenter.getEventHandlingLogMessage(event));
+        browserPlaceholder.getChildren().clear();
+        browserPlaceholder.getChildren().add(viewTaskPanel.getRoot());
+    }
+
+    @Subscribe
+    private void handlePersonPanelSelectionChangedEvent(PersonPanelSelectionChangedEvent event) {
+        logger.info(LogsCenter.getEventHandlingLogMessage(event));
+        browserPlaceholder.getChildren().clear();
+        browserPlaceholder.getChildren().add(viewPersonPanel.getRoot());
+    }
+
+    @Subscribe
+    private void handleBrowserPanelLocateEvent(BrowserPanelLocateEvent event) {
+        logger.info(LogsCenter.getEventHandlingLogMessage(event));
+        browserPlaceholder.getChildren().clear();
+        browserPlaceholder.getChildren().add(browserPanel.getRoot());
+    }
+
+    @Subscribe
+    private void handleTaskStateChangeEvent(TaskStateChangeEvent event) {
+        //TODO make sure this structure does not violate architecture
+        logger.info(LogsCenter.getEventHandlingLogMessage(event));
+        try {
+            model.updateTask(event.targetToReplace, event.newTask);
+        } catch (DuplicateTaskException dte) {
+            throw new AssertionError("The newly updated task cannot be the same as the previous one");
+        } catch (TaskNotFoundException tnfe) {
+            throw new AssertionError("The task cannot be missing");
+        }
     }
 }

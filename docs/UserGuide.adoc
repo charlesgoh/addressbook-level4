@@ -13,15 +13,15 @@ endif::[]
 :repoURL: https://github.com/CS2103AUG2017-W09-B2/main
 
 By: `Team W09-B2`      Since: `Aug 2017`      Licence: `MIT`
-
+//tag::introduction[]
 Address++ is an application that keeps track of your contacts and your daily todos for you. It is targeted
-at students who work on projects or assignments frequently, but it can also be used for other similar purposes.
+at students who work on projects or assignments frequently, but it can also be used for other purposes.
 
 == About
 
 After reading this user guide, you should be more familiar with how Address++ can be used to maintain your contacts and tasks. +
 No technical knowledge is required when running the application, although basic knowledge of installation is required to install the prerequisite libraries for Address++ (Java). +
-
+//end::introduction[]
 == Getting Started
 
 .  Ensure you have Java version `1.8.0_60` or later installed in your Computer.
@@ -59,7 +59,7 @@ adds a contact named `John Doe` to Address++.
 * Items with `…`​ after them can be used multiple times including zero times e.g. `[t/TAG]...` can be used as `{nbsp}` (i.e. 0 times), `t/friend`, `t/friend t/family` etc.
 * Parameters can be in any order e.g. if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 ====
-
+//tag::fontsize[]
 === Changing Font Sizes
 
 Are the font sizes too small or too big? Address++ allows you to change your font sizes at will. Here are some of the
@@ -94,7 +94,7 @@ image::FontSizeCLI.png[width="540"]
 * Decrease Size Command: `fontsize decrease`
 * Reset Size Command: `fontsize reset`
 ****
-
+//end::fontsize[]
 === Viewing help : `help`
 If you have trouble figuring out how to do something, or would like to find out about more features, you can click
 on the **help** menu button. You can also enter the command `help` to access the help window.
@@ -104,6 +104,8 @@ image::HelpButtonUI.png[width="540"]
 Format: `help` +
 Alternatively,  you may opt to use the keyboard shortcut kbd:[F1].
 
+// tag::addprivacy[]
+// tag::avatar[]
 === Adding a person: `add`
 
 You can use the `add` command to add new people to your address book
@@ -111,13 +113,13 @@ You can use the `add` command to add new people to your address book
 [NOTE]
 `add` can be replaced by `a` for faster input.
 
-Format: `add n/NAME p/[PHONE_NUMBER] e/[EMAIL] a/[ADDRESS] b/[BIRTHDAY] r/[REMARK] f/[FACULTY] c/[GOOGLE CALENDAR URL] [t/TAG]...` +
+Format: `add n/NAME p/[PHONE_NUMBER] e/[EMAIL] a/[ADDRESS] r/[REMARK] v/[AVATAR] [t/TAG]...` +
 
 ****
 **Things To Note** +
 * A person can have any number of tags (including 0) +
 * The `EMAIL` should be in the format address@email.domain +
-* You can set a person's `Name`, `Phone`, `Email`, `Address` or `Remark` to be private by placing a `p` in front of the prefix. +
+* You can set a person's `Name`, `Phone`, `Email`, `Address`, `Remark`, `Avatar` to be private by placing a `p` in front of the prefix. +
 ****
 
 **Example Scenarios**:
@@ -125,23 +127,31 @@ Format: `add n/NAME p/[PHONE_NUMBER] e/[EMAIL] a/[ADDRESS] b/[BIRTHDAY] r/[REMAR
 **Example Scenario 1** +
 Suppose you wanted to add your new friend John Doe. You could type the following command to add his details:
 
-`add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 b/11-11-1995 r/Likes panda bears`
+`add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01 b/11-11-1995 r/Likes panda bears
+v/https://helloworld/image.png`
 ****
 ****
 **Example Scenario 2** +
 Now suppose you have another friend named Ima Hidearu, who does not provide you with all the contact information that
 you need. You can choose to omit these fields by typing in the command:
 
-`add n/Ima Hidearu b/ a/ e/ p/ r/ t/secretive`
+`add n/Ima Hidearu a/ e/ p/ r/ v/ t/secretive`
 ****
 ****
 **Example Scenario 3** +
 Sometimes, you may wish to keep some fields private (i.e. not reveal them in the application). You can use the private
 option while typing in your command:
 
-`add pn/Neville Shorttop pp/46492787 pe/nevilleS@gmail.com pa/Gryphon Gate c/`
-****
+`add pn/Neville Shorttop pp/46492787 pe/nevilleS@gmail.com pa/Gryphon Gate pr/A true hero` +
 
+* Do note that you do not have to set all fields as private, and you can choose which specific fields you want to set as private.
+****
+//end::avatar[]
+//end::addprivacy[]
+
+[NOTE]
+As of version 1.5rc, the avatar field supports only URLs sourced online. References to local files may not work.
+//tag::addtask[]
 === Adding a task: `add task`
 
 You can use the `add task` command to add new tasks to your address book. This allows you to keep track of your
@@ -171,9 +181,10 @@ task into the Address++ application.
 **Example Scenario 2** +
 You realize that you have run out of pencils. You decide to add a task into Address++ to remind you to get some
 new ones later.
-
 `add task n/Buy new pencil p/2`
 ****
+// end::addtask[]
+// tag::addtag[]
 
 === Adding a tag to persons : `addtag` (Since V1.2)
 
@@ -198,7 +209,7 @@ Adds the friends tag of the 1st and 2nd person in the address book.
 * `list` +
 `addtag t/acquaintance` +
 Adds the acquaintance tag to all contacts in the address book.
-
+// end::addtag[]
 
 === Listing all persons : `list`
 
@@ -207,11 +218,12 @@ Format: `list` +
 
 Instead of typing out `list` every time, you can alternatively use `l` to shorten the command.
 
+// tag::editprivacy[]
 === Editing a person : `edit`
 
 You can use the `edit` command to quickly fix mistakes in your entries, or add/remove details in your contacts. You may wish to edit your contacts when they change their phone numbers, for example. +
 `edit` can be replaced by `e` for faster input. +
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [b/BIRTHDAY] c/[GOOGLE CALENDAR URL] [t/TAG]...` +
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [r/REMARK] [v/AVATAR] [t/TAG]...` +
 
 ****
 * The index refers to the index number shown in the last listing. The index *must be a positive integer* 1, 2, 3, ...
@@ -248,7 +260,9 @@ Examples:
 Edits the priority of the 2nd task to be `5`.
 * `edit task 2 p/ t/` +
 Removes the priority and deadline of the second task.
+// end::editprivacy[]
 
+// tag::edittag[]
 === Renaming existing tags : `edittag` (Since v1.2)
 
 You can use `edittag` to rename one existing tag. For example, you may wish to promote all existing "acquaintances" into "friends", or change all "CS2103" project mates to "CS2101" project mates instead. +
@@ -265,11 +279,13 @@ Examples:
 
 * `edittag friends enemies` +
 Changes the tag called `friends` to one called `enemies` instead. All existing contacts with a `friends` tag will now have an `enemies` tag instead.
+// end::edittag[]
 
+// tag::changeprivacy[]
 === Changing the Privacy of a person's details : `changeprivacy`(Since V1.3)
 
 You can use the `changeprivacy` command to set the privacy settings for each field of an existing `Person` in the address book, which allows you to choose specifically what information will be displayed. +
-Format: `changeprivacy INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS]`
+Format: `changeprivacy INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [r/REMARK] [v/AVATAR]`
 Shorthand commands: `cp`
 
 ****
@@ -288,8 +304,9 @@ Examples:
 Sets the phone number of the 1st person to be public and their email address to be private. The 1st person's phone number will be displayed, if available, while their email address will be hidden in the UI.
 * `cp 2 a/false n/true e/false` +
 Sets the address and email of the 2nd person to be public and their name to be private. The 2nd person's address and email will be displayed, if available, while their name will be hidden in the UI.
+// end::changeprivacy[]
 
-
+// tag::favourite[]
 === Favouriting persons : `favourite` (since V1.3)
 
 You can use `favourite` command to make persons in the address book become your favourite persons. For example, you may wish to set your girlfriend as your favourite contact. +
@@ -310,6 +327,10 @@ Favourite the 1st person in the results of the `find` command.
 * The index refers to the index number shown in the most recent listing.
 * The index you key in *must be a positive integer* 1, 2, 3, ...
 ****
+// end::favourite[]
+
+
+// tag::showfavourite[]
 
 === Listing all favourite persons : `showfavourite` (since V1.3)
 
@@ -321,6 +342,7 @@ Format: `showfavourite` +
 ====
 `showfavourite` command: It will return an empty list if there is no favourite persons.
 ====
+// end::showfavourite[]
 
 === Locating persons by name : `find`
 
@@ -361,6 +383,9 @@ Returns any task that has the word `update` in their names or descriptions
 * `find task update 4` +
 Returns all tasks that has the word `update` in their names or descriptions
 
+
+// tag::showandfindtag[]
+
 === Listing all tags : `showtag` (Since V1.5)
 
 You can use the `showtag` command to quickly show all tags in the address book. This is a helper command for `findtag`+
@@ -375,7 +400,7 @@ Format: `showtag` +
 === Locating persons by tag : `findtag` (Since V1.4)
 
 You can use the `findtag` command to quickly filter out contacts who match your criteria. For example, you may wish to find contacts who are your `classmates`. +
-If you want to find contacts who are your `classmates` but not your `friends`, you just need to add `/not` in front of the `friends`. +
+If you want to find contacts who are your `classmates` but not your `friends`, you just need to add `/` in front of the `friends`. +
 `findtag` can be replaced by `ftag` for faster input. +
 Format: `findtag KEYWORD [MORE_KEYWORDS]` +
 
@@ -385,19 +410,20 @@ Examples:
 Returns any persons having tag `friends`
 * `findtag friends colleagues` +
 Returns any person having tags `friends` or `colleagues`
-* `findtag /notfriends` +
+* `findtag /friends` +
 Returns any persons not have tag `friends`
-* `findtag classmates /notfriends` +
-Returns any person have tags `classmates` but not have tag `friends`
+* `findtag classmates /friends` +
+Returns any person having tags `classmates` but not having tag `friends`
 
 ****
-*Important note on `findtag` criteria
+* Important note on `findtag` criteria
 * The search is not case insensitive. e.g `friends` will match `FRIENDS`
 * The order of the keywords does not matter. e.g. `friends classmates` will match `classmates friends`
 * Only the tag is searched for persons.
 * Only full words will be matched e.g. `friend` will not match `friends`
 * There is no space `/not` and tag name e.g. `/not friends` will not match `/notfriends`
 ****
+// end::showandfindtag[]
 
 === Deleting a person : `delete`
 
@@ -432,6 +458,7 @@ Deletes the 2nd task in the address book.
 `delete task 1` +
 Deletes the 1st task in the results of the `find task` command.
 
+// tag::deletetag[]
 
 === Deleting a tag of persons : `deletetag` (Since V1.2)
 
@@ -455,7 +482,8 @@ Delete the friends tag of the 1st and 2nd person in the address book.
 * `list` +
 `deletetag t/friends` +
 Delete the friends tag from all contacts in the address book.
-
+// end::deletetag[]
+// tag::sort[]
 === Sorting your contact list and tasks : `sort`
 
 Sort your contacts or tasks by using the `sort` command +
@@ -465,7 +493,7 @@ Format: `sort LIST FIELD ORDER` +
 ****
 * Allows you to sort your contacts by any field in either ascending or descending order
 * Allows you to srot your tasks by deadline or by priority in ascending or descending order
-* Field parameters for person contacts: NAME, PHONE, EMAIL, ADDRESS.
+* Field parameters for person contacts: NAME, PHONE, EMAIL, ADDRESS, REMARK, AVATAR.
 * Field parameters for tasks: DEADLINE, PRIORITY.
 * Order parameters are limited to the following fields: ASC, DESC.
 * You can undo this command if you want to revert to the pre-sort ordering of contacts
@@ -485,7 +513,8 @@ This allows you to sort all tasks in ascending order by the deadline field (i.e.
 * `sort task priority desc` +
 This allows you to sort all tasks in descending order by the priority field (i.e. higher priority tasks
 are listed on top).
-
+//end::sort[]
+//tag::backup[]
 === Backing up your data : `backup`
 
 You can backup your saved data on Address++ by using the `backup` command. +
@@ -505,7 +534,7 @@ Examples:
 This command will help you back up in the default save location --> In the data directory of your application.
 * `backup ./test.xml` or `bk ./test.xml` +
 This saves the backup file in the current data directory, with the name `test.xml`.
-
+//end::backup[]
 === Selecting a person : `select`
 
 You can use `select` to pick out one contact or task, and look at it in greater detail, such as examining a task with a very long description, or checking out the full address of one of your friends. +
@@ -539,6 +568,7 @@ Selects the 2nd task in the address book.
 `select task 1` +
 Selects the 1st task in the results of the `find task` command.
 
+// tag::locate[]
 === Locating a person's address : `locate` (Since V1.4)
 
 If you ever need to visit one of your contacts, you can use `locate` to choose a contact, and search for their address online using Google Maps. +
@@ -556,12 +586,44 @@ Locates the address of the 1st person in the results of the `find` command on Go
 
 ****
 * Depending on the stored value of the address, Google Maps may be unable to find the correct address or may display multiple addresses of the same name. +
-** It is up to you to provide a specific and valid address.
+** It is up to you to provide specific and valid addresses.
 * A person with a private address cannot be searched on Google Maps.
+* A person with no address will open Google Maps, but it will not search for an address as there is no address to search for.
 * The index refers to the index number shown in the most recent listing.
-* The index *must be a positive integer* `1, 2, 3, ...`
+* The index *must be a positive integer* `1, 2, 3, ...` and must be within the range of people in the most recent listing.
 ****
+// end::locate[]
 
+// tag::navigate[]
+=== Navigating from one address to another : `navigate` (Since V1.5)
+
+Although `locate` shows you where a person's address is, it does not tell you how to get there. The `navigate` command will provide directions, with the help of Google Maps, on how to get from one address to another. +
+`navigate` can be replaced by `nav` for faster input. +
+Format (person): `navigate [fp/INDEX] [ft/INDEX] [fa/ADDRESS] (Must have only one of three) [tp/INDEX] [tt/INDEX] [ta/ADDRESS] (Must have only one of three)` +
+
+Examples:
+
+* `navigate fa/NUS tp/1` +
+Opens Google Maps to provide directions on how to navigate from NUS to the address of the first person in the address book.
+* `navigate  fp/3 tt/2` +
+Opens Google Maps to provide directions on how to navigate from the address of the third person in the address book to the address of the second task in the address book.
+* `navigate  ft/1 ta/Changi Airport` +
+Opens Google Maps to provide directions on how to navigate from the address of the first task in the address book to Changi Airport.
+
+****
+* Depending on the stored value of the address, Google Maps may be unable to find the correct address or may display multiple addresses of the same name. +
+** It is up to you to provide specific and valid addresses.
+* A person with a private address or a person with no address cannot be navigated from or navigated to.
+* A task with no address cannot be navigated from or navigated to.
+* The index refers to the index number shown in the most recent listing.
+* The index *must be a positive integer* `1, 2, 3, ...` and must be within the range of people in the most recent listing.
+* You may only input exactly one of the 3 prefixes from `fp/` `ft/` and `fa/` to indicate the address to navigate from, and exactly one of the 3 prefixes from `tp/` `tt/` and `ta/` to indicate the address to navigate to.
+** If you input any less or any more than 1 of the 3 prefixes from each group, the command will fail.
+** There is no need to match the type of prefixes. You can navigate with any combination of prefixes as long as there is only one prefix to indicate the address to navigate from and only one prefix to indicate the address to navigate to.
+****
+// end::navigate[]
+
+// tag::setstate[]
 === Mark task as complete : `setcomplete` (Since V1.5)
 
 Have you finally completed a task in the address book? You can use `setcomplete` to mark the specified task as complete. +
@@ -603,7 +665,9 @@ Sets the 2nd task in the address book as incomplete.
 * `find task update` +
 `setincomplete 1` +
 Sets the 1st task in the results of the `find task` command as incomplete.
+// end::setstate[]
 
+// tag::assignDismiss[]
 === Assign contacts to task : `assign` (Since V1.4)
 
 You can use `assign` to assign contacts to an ongoing task. You may wish to use `assign` when collaborating with others for projects, for example. +
@@ -651,6 +715,7 @@ Dismisses 1st, 4th and 5th contacts in the address book from the 2nd task.
 `find task update` +
 `dismiss 2 from/1` +
 Dismisses the 2nd person in the address book from the 1st task in the results of the `find task` command.
+// end::assignDismiss[]
 
 === Listing entered commands : `history`
 
@@ -663,7 +728,6 @@ Format: `history` +
 Pressing the kbd:[&uarr;] and kbd:[&darr;] arrows will display the previous and next input respectively in the command box.
 ====
 
-// tag::undoredo[]
 === Undoing previous command : `undo`
 
 Did you make a mistake somewhere? `undo` restores the address book to the state before the previous _undoable_ command was executed. +
@@ -691,6 +755,7 @@ The `undo` command fails as there are no undoable commands executed previously.
 `undo` (reverses the `clear` command) +
 `undo` (reverses the `delete 1` command) +
 
+// tag::unfavourite[]
 
 === Unfavouriting persons : `unfavourite` (since V1.3)
 
@@ -713,6 +778,7 @@ Unfavourite the 1st person in the results of the `find` command.
 * The index refers to the index number shown in the most recent listing.
 * The index you key in *must be a positive integer* 1, 2, 3, ...
 ****
+// end::unfavourite[]
 
 === Redoing the previously undone command : `redo`
 
@@ -736,7 +802,6 @@ The `redo` command fails as there are no `undo` commands executed previously.
 `undo` (reverses the `delete 1` command) +
 `redo` (reapplies the `delete 1` command) +
 `redo` (reapplies the `clear` command) +
-// end::undoredo[]
 
 === Clearing all entries : `clear`
 
@@ -751,6 +816,7 @@ Format: `exit`
 
 Alternatively, you may opt to use the keyboard shortcut kbd:[ALT]+kbd:[F4].
 
+// tag::opensaveas[]
 === Saving the data
 
 Address book data is saved in the hard disk automatically after any command that changes the data. +
@@ -760,6 +826,7 @@ If you want to change the location of the save file, click on `File -> Save As` 
 
 If you want to open a different save file, click on `File -> Open` or use the keyboard shortcut kbd:[CTRL]+kbd:[O] and select the new save file to use from the pop-up window.
 
+// end::opensaveas[]
 === Using the browser
 
 If you click on a box containing a contact, an internet browser on the right side of the window.
@@ -768,17 +835,6 @@ If you click on a box containing a contact, an internet browser on the right sid
 * If a person's name or address is set to private, the browser will not perform a search if you click on their box.
 * Right clicking on the browser will allow you to go to the previous or next page, as well as reload the page.
 ****
-
-=== Exporting the data
-
-Address book data can be exported in a number of different formats, thus allowing the data to be compatible to any device.
-
-To export data, click on `File -> Export As...` or use the keyboard shortcut kbd:[CTRL]+kbd:[E]` and select the new location and file name for the export file in the pop-up window.
-
-=== Auto-Complete: Learning Your Typing Habits
-
-The program will learn your typing habits and give autocomplete suggestions that become more accurate over time.
-
 == FAQ
 
 *Q*: How do I transfer my data to another Computer? +
@@ -786,25 +842,27 @@ The program will learn your typing habits and give autocomplete suggestions that
 
 == Command Summary and Cheat Sheet
 
-* *Add* : `add n/NAME p/[PHONE_NUMBER] e/[EMAIL] a/[ADDRESS] b/[BIRTHDAY] f/[FACULTY] c/[GOOGLE CALENDAR URL] [t/TAG]...` +
-e.g. `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665, b/29-02-1996 f/SOC c/www.enteryourcalendarurlhere.com t/friend t/colleague`
-* *Add with private fields* : `add or a pn/NAME pp/PHONE_NUMBER pe/EMAIL pa/ADDRESS b/BIRTHDAY f/FACULTY c/[GOOGLE CALENDAR URL] [t/TAG]...` +
-e.g. `add pn/James Ho pp/22224444 pe/jamesho@example.com pa/123, Clementi Rd, 1234665`
+* *Add* : `add n/NAME p/[PHONE_NUMBER] e/[EMAIL] a/[ADDRESS] r/[REMARK] [t/TAG]...` +
+e.g. `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 r/Sleeps at 3am t/friend t/colleague`
+* *Add with private fields* : `add pn/NAME pp/[PHONE_NUMBER] pe/[EMAIL] pa/[ADDRESS] r/[REMARK] [t/TAG]...` +
+e.g. `add pn/James Ho pp/22224444 pe/jamesho@example.com pa/123, Clementi Rd, 1234665 r/Sleeps at 3am t/friend t/colleague`
 * *Add task* : `add task n/NAME d/[DESCRIPTION] by/[DEADLINE] p/[PRIORITY]` +
 e.g. `add task n/Update Documentation d/Update documentations for V1.1 for CS2103T t/30/10/17 p/high`
 * *Add tag* : `addtag INDEX t/[TAG]` +
 e.g. `addtag 1 2 t/friends`
-* *Change a person's details' privacy* : `changeprivacy INDEX [n/TRUE or FALSE] [p/TRUE or FALSE] [e/TRUE or FALSE] [a/TRUE or FALSE]` +
-e.g. `changeprivacy 2 n/true p/false e/true a/false`
-* *Clear person* : `clear`
-* *Clear tasks* : `cleartask`
+* *Change a person's details' privacy* : `changeprivacy INDEX [n/TRUE or FALSE] [p/TRUE or FALSE] [e/TRUE or FALSE] [a/TRUE or FALSE] [r/TRUE or FALSE]` +
+e.g. `changeprivacy 2 n/true p/false e/true a/false r/true`
+* *Clear all data* : `clear`
+* *Clear persons* : `clear person`
+* *Clear tasks* : `clear task`
 * *Delete person* : `delete INDEX` +
 e.g. `delete 3`
 * *Delete task* : `delete task INDEX` +
 e.g. `delete task 4`
 * *Delete tag* : `deletetag INDEX t/[TAG]` +
 e.g. `deletetag 1 2 t/friends`
-* *Edit* : `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] c/[GOOGLE CALENDAR URL] [a/ADDRESS] [t/TAG]...` +
+* *Edit* : `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS]
+[v/AVATAR] [t/TAG]...` +
 e.g. `edit 2 n/James Lee e/jameslee@example.com`
 * *Edit task* : `edit task INDEX [n/NAME] [d/DESCRIPTION] [t/DEADLINE] [p/PRIORITY]` +
 e.g. `edit task 2 p/veryhigh`
@@ -823,10 +881,11 @@ e.g. `findtag friends`
 * *Find task* : `find task KEYWORD [MORE_KEYWORDS] [p/PRIORITY]` +
 e.g. `find task update p/high`
 * *Help* : `help`
-* *List persons* : `list`
-* *List tasks* : `list task`
+* *List persons and tasks* : `list`
 * *List tags* : `showtag`
-* *Locate a person's address* : `locate`
+* *Locate a person's address* : `locate INDEX`
+* *Navigating from one address to another* : ``navigate [fp/INDEX] [ft/INDEX] [fa/ADDRESS] (Must have only one of three) [tp/INDEX] [tt/INDEX] [ta/ADDRESS] (Must have only one of three)` +
+e.g. navigate fa/Tampines Mall ta/Sentosa
 * *Select person* : `select INDEX` +
 e.g.`select 2`
 * *Select task* : `select task INDEX` +
@@ -843,6 +902,64 @@ e.g. `dismiss 4 1 from/17`
 * *Undo* : `undo`
 * *Redo* : `redo`
 
+== Command Shorthand Cheat Sheet
+* *Add* : `a n/NAME p/[PHONE_NUMBER] e/[EMAIL] a/[ADDRESS] [t/TAG]...` +
+e.g. `a n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 r/Sleeps at 3am t/friend t/colleague`
+* *Add with private fields* : `a pn/[NAME] pp/[PHONE_NUMBER] pe/[EMAIL] pa/[ADDRESS] pr/[REMARK] [t/TAG]...` +
+e.g. `a pn/James Ho pp/22224444 pe/jamesho@example.com pa/123, Clementi Rd, 1234665 pr/Sleeps at 3am`
+* *Add task* : `a task n/NAME d/[DESCRIPTION] by/[DEADLINE] p/[PRIORITY]` +
+e.g. `a task n/Update Documentation d/Update documentations for V1.1 for CS2103T t/30/10/17 p/high`
+* *Add tag* : `atag INDEX t/[TAG]` +
+e.g. `atag 1 2 t/friends`
+* *Change a person's details' privacy* : `cp INDEX [n/TRUE or FALSE] [p/TRUE or FALSE] [e/TRUE or FALSE] [a/TRUE or FALSE] [r/TRUE or FALSE]` +
+e.g. `cp 2 n/true p/false e/true a/false r/true`
+* *Clear all data* : `clear`
+* *Clear persons* : `c person`
+* *Clear tasks* : `c task`
+* *Delete person* : `d INDEX` +
+e.g. `d 3`
+* *Delete task* : `d task INDEX` +
+e.g. `d task 4`
+* *Delete tag* : `dtag INDEX t/[TAG]` +
+e.g. `dtag 1 2 t/friends`
+* *Edit* : `e INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL]  [a/ADDRESS] [r/REMARK] [t/TAG]...` +
+e.g. `e 2 n/James Lee e/jameslee@example.com`
+* *Edit task* : `e task INDEX [n/NAME] [d/DESCRIPTION] [t/DEADLINE] [p/PRIORITY]` +
+e.g. `e task 2 p/veryhigh`
+* *Edit tag* : `et TAGTOCHANGE NEWTAGNAME` +
+e.g. `et friends enemies`
+* *Favourite persons* :`fav INDEX` +
+e.g. `fav 1`
+* *Unfavourite persons* :`unfav INDEX` +
+e.g. `unfav 1`
+* *Show favourite list* :`sfav` +
+e.g. `sfav`
+* *Find person* : `f KEYWORD [MORE_KEYWORDS]` +
+e.g. `f James Jake`
+* *Find tag* : `ftag Tag [MORE_TAGS]` +
+e.g. `ftag friends`
+* *Find task* : `f task KEYWORD [MORE_KEYWORDS] [p/PRIORITY]` +
+e.g. `f task update p/high`
+* *List persons and tasks* : `l`
+* *List tags* : `stag`
+* *Locate a person's address* : `loc INDEX`
+* *Navigating from one address to another* : ``navi [fp/INDEX] [ft/INDEX] [fa/ADDRESS] (Must have only one of three) [tp/INDEX] [tt/INDEX] [ta/ADDRESS] (Must have only one of three)` +
+e.g. navi fa/Tampines Mall ta/Sentosa
+* *Select person* : `s INDEX` +
+e.g.`s 2`
+* *Select task* : `s task INDEX` +
+e.g.`s task 2`
+* *Set task as complete* : `stc INDEX` +
+e.g. `stc 4`
+* *Set task as incomplete* : `sti INDEX` +
+e.g. `sti 5`
+* *Assign to task* : `as PERSONINDEX... to/TASKINDEX` +
+e.g. `as 4 1 17 18 to/21`
+* *Dismiss from task* : `ds PERSONINDEX... from/TASKINDEX` +
+e.g. `ds 4 1 from/17`
+* *History* : `h`
+* *Undo* : `u`
+* *Redo* : `r`
 == Keyboard Shortcuts
 
 * *Exit* : kbd:[ALT]+kbd:[F4]

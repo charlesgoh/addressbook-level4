@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_AVATAR;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DEADLINE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
@@ -22,6 +23,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.Avatar;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
@@ -37,6 +39,7 @@ import seedu.address.model.task.Description;
 import seedu.address.model.task.Priority;
 import seedu.address.model.task.ReadOnlyTask;
 import seedu.address.model.task.Task;
+import seedu.address.model.task.TaskAddress;
 import seedu.address.model.task.TaskName;
 import seedu.address.model.task.exceptions.DuplicateTaskException;
 import seedu.address.model.task.exceptions.TaskNotFoundException;
@@ -58,6 +61,7 @@ public class EditCommand extends UndoableCommand {
             + "[" + PREFIX_EMAIL + "EMAIL] "
             + "[" + PREFIX_ADDRESS + "ADDRESS] "
             + "[" + PREFIX_REMARK + "REMARK] "
+            + "[" + PREFIX_AVATAR + "AVATAR] "
             + "[" + PREFIX_TAG + "TAG]...\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_PHONE + "91234567 "
@@ -175,6 +179,7 @@ public class EditCommand extends UndoableCommand {
         Remark updatedRemark;
         Set<Tag> updatedTags;
         Boolean updateFavourite;
+        Avatar updatedAvatar;
 
         areFieldsAllPrivate = true;
         updatedName = createUpdatedName(personToEdit, editPersonDescriptor);
@@ -191,11 +196,13 @@ public class EditCommand extends UndoableCommand {
 
         updateFavourite = createUpdatedFavourite(personToEdit, editPersonDescriptor);
 
+        updatedAvatar = createUpdatedAvatar(personToEdit, editPersonDescriptor);
+
         if (areFieldsAllPrivate) {
             throw new IllegalArgumentException();
         }
         return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress,
-                          updateFavourite, updatedRemark, updatedTags);
+                          updateFavourite, updatedRemark, updatedAvatar, updatedTags);
     }
 
     /**
@@ -277,7 +284,7 @@ public class EditCommand extends UndoableCommand {
         }
         return updatedAddress;
     }
-
+    //**author charlesgoh
     /**
      * Creates an updated (@code Remark) for use in createEditedPerson
      * @param personToEdit The person to edit
@@ -298,6 +305,26 @@ public class EditCommand extends UndoableCommand {
         return updatedRemark;
     }
 
+    /**
+     * Creates an updated (@code Avatar) for use in createEditedPerson
+     * @param personToEdit The person to edit
+     * @param editPersonDescriptor Edited with this editPersonDescriptor
+     * @return A new (@code Avatar) from either the personToEdit or the editPersonDescriptor
+     * depending on privacy and the input
+     */
+    private static Avatar createUpdatedAvatar(ReadOnlyPerson personToEdit, EditPersonDescriptor editPersonDescriptor) {
+        Avatar updatedAvatar;
+        if (!personToEdit.getAvatar().isPrivate()) {
+            updatedAvatar = editPersonDescriptor.getAvatar().orElse(personToEdit.getAvatar());
+            if (editPersonDescriptor.getAvatar().isPresent()) {
+                areFieldsAllPrivate = false;
+            }
+        } else {
+            updatedAvatar = personToEdit.getAvatar();
+        }
+        return updatedAvatar;
+    }
+    //author
     /**
      * Creates an updated (@code Tag) for use in createEditedPerson
      * @param personToEdit The person to edit
@@ -341,6 +368,7 @@ public class EditCommand extends UndoableCommand {
         Priority updatedPriority;
         Assignees assignees;
         Boolean updatedState;
+        TaskAddress updatedTaskAddress;
 
         updatedTaskName = editTaskDescriptor.getTaskName().orElse(taskToEdit.getTaskName());
         updatedDescription = editTaskDescriptor.getDescription().orElse(taskToEdit.getDescription());
@@ -349,8 +377,10 @@ public class EditCommand extends UndoableCommand {
         // You cannot edit assignees or state using edit command
         assignees = taskToEdit.getAssignees();
         updatedState = taskToEdit.getCompleteState();
+        updatedTaskAddress = editTaskDescriptor.getTaskAddress().orElse(taskToEdit.getTaskAddress());
 
-        return new Task(updatedTaskName, updatedDescription, updatedDeadline, updatedPriority, assignees, updatedState);
+        return new Task(updatedTaskName, updatedDescription, updatedDeadline, updatedPriority, assignees, updatedState,
+                updatedTaskAddress);
     }
 
     //@@author
@@ -389,6 +419,7 @@ public class EditCommand extends UndoableCommand {
         private Address address;
         private Boolean favourite;
         private Remark remark;
+        private Avatar avatar;
         private Set<Tag> tags;
 
         public EditPersonDescriptor() {}
@@ -400,6 +431,7 @@ public class EditCommand extends UndoableCommand {
             this.address = toCopy.address;
             this.favourite = toCopy.favourite;
             this.remark = toCopy.remark;
+            this.avatar = toCopy.avatar;
             this.tags = toCopy.tags;
         }
 
@@ -407,7 +439,8 @@ public class EditCommand extends UndoableCommand {
          * Returns true if at least one field is edited.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(this.name, this.phone, this.email, this.address, this.remark, this.tags);
+            return CollectionUtil.isAnyNonNull(this.name, this.phone, this.email, this.address, this.remark,
+                    this.avatar, this.tags);
         }
 
         public void setName(Name name) {
@@ -458,6 +491,14 @@ public class EditCommand extends UndoableCommand {
             return Optional.ofNullable(remark);
         }
 
+        public void setAvatar(Avatar avatar) {
+            this.avatar = avatar;
+        }
+
+        public Optional<Avatar> getAvatar() {
+            return Optional.ofNullable(avatar);
+        }
+
         public void setTags(Set<Tag> tags) {
             this.tags = tags;
         }
@@ -487,6 +528,7 @@ public class EditCommand extends UndoableCommand {
                     && getAddress().equals(e.getAddress())
                     && getFavourite().equals(e.getFavourite())
                     && getRemark().equals(e.getRemark())
+                    && getAvatar().equals(e.getAvatar())
                     && getTags().equals(e.getTags());
         }
     }
@@ -501,6 +543,7 @@ public class EditCommand extends UndoableCommand {
         private Deadline deadline;
         private Priority priority;
         private Assignees assignees;
+        private TaskAddress taskAddress;
 
         public EditTaskDescriptor() {}
 
@@ -510,13 +553,15 @@ public class EditCommand extends UndoableCommand {
             this.deadline = toCopy.deadline;
             this.priority = toCopy.priority;
             this.assignees = toCopy.assignees;
+            this.taskAddress = toCopy.taskAddress;
         }
 
         /**
          * Returns true if at least one field is edited.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(this.taskName, this.description, this.deadline, this.priority);
+            return CollectionUtil.isAnyNonNull(this.taskName, this.description, this.deadline, this.priority,
+                    this.taskAddress);
         }
 
         public void setTaskName(TaskName taskName) {
@@ -551,6 +596,14 @@ public class EditCommand extends UndoableCommand {
             return Optional.ofNullable(priority);
         }
 
+        public void setTaskAddress(TaskAddress taskAddress) {
+            this.taskAddress = taskAddress;
+        }
+
+        public Optional<TaskAddress> getTaskAddress() {
+            return Optional.ofNullable(taskAddress);
+        }
+
         @Override
         public boolean equals(Object other) {
             // short circuit if same object
@@ -569,7 +622,8 @@ public class EditCommand extends UndoableCommand {
             return getTaskName().equals(e.getTaskName())
                     && getDescription().equals(e.getDescription())
                     && getDeadline().equals(e.getDeadline())
-                    && getPriority().equals(e.getPriority());
+                    && getPriority().equals(e.getPriority())
+                    && getTaskAddress().equals(e.getTaskAddress());
         }
     }
 }

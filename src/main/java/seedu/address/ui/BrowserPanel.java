@@ -13,8 +13,8 @@ import javafx.scene.web.WebView;
 import seedu.address.MainApp;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.events.ui.BrowserPanelLocateEvent;
+import seedu.address.commons.events.ui.BrowserPanelNavigateEvent;
 import seedu.address.commons.events.ui.NewResultAvailableEvent;
-import seedu.address.commons.events.ui.PersonPanelSelectionChangedEvent;
 import seedu.address.model.person.ReadOnlyPerson;
 
 /**
@@ -31,6 +31,8 @@ public class BrowserPanel extends UiPart<Region> {
     public static final String GOOGLE_MAPS_URL_SUFFIX  = "/";
     public static final String PRIVATE_ADDRESS_CANNOT_SEARCH = "Cannot perform a search on that person's address. "
             + "Their address is private.";
+    public static final String GOOGLE_MAPS_DIRECTIONS_PREFIX = "https://www.google.com.sg/maps/dir/?api=1";
+    public static final String GOOGLE_MAPS_DIRECTIONS_SUFFIX  = "/";
 
     private static final String FXML = "BrowserPanel.fxml";
 
@@ -67,7 +69,7 @@ public class BrowserPanel extends UiPart<Region> {
 
     //@@author jeffreygohkw
     /**
-     * Loads a google search for a person'saddress if their address is not private
+     * Loads a google search for a person's address if their address is not private
      * Prints out a message on the result display otherwise
      * @param person The person's address we want to search for
      */
@@ -80,6 +82,22 @@ public class BrowserPanel extends UiPart<Region> {
         }
     }
 
+    /**
+     * Loads Google Maps with directions on how to go from one location to another
+     * @param fromLocation The location we want to start from
+     * @param toLocation The location we want to reach
+     */
+    private void loadDirectionsPage(String fromLocation, String toLocation) {
+        loadPage(GOOGLE_MAPS_DIRECTIONS_PREFIX + "&origin="
+                + fromLocation.replaceAll("#(\\w+)\\s*", "").replaceAll(" ", "+")
+                .replaceAll("-(\\w+)\\s*", "")
+                + "&destination="
+                + toLocation.replaceAll("#(\\w+)\\s*", "").replaceAll(" ", "+")
+                .replaceAll("-(\\w+)\\s*", "")
+                + GOOGLE_MAPS_DIRECTIONS_SUFFIX);
+    }
+
+    //@@author
     public void loadPage(String url) {
         Platform.runLater(() -> browser.getEngine().load(url));
     }
@@ -99,16 +117,18 @@ public class BrowserPanel extends UiPart<Region> {
         browser = null;
     }
 
-    @Subscribe
-    private void handlePersonPanelSelectionChangedEvent(PersonPanelSelectionChangedEvent event) {
-        logger.info(LogsCenter.getEventHandlingLogMessage(event));
-        loadPersonPage(event.getNewSelection().person);
-    }
+
 
     //@@author jeffreygohkw
     @Subscribe
     private void handleBrowserPanelLocateEvent(BrowserPanelLocateEvent event) {
         logger.info(LogsCenter.getEventHandlingLogMessage(event));
         loadMapsPage(event.getNewSelection());
+    }
+
+    @Subscribe
+    private void handleBrowserPanelNavigateEvent(BrowserPanelNavigateEvent event) {
+        logger.info(LogsCenter.getEventHandlingLogMessage(event));
+        loadDirectionsPage(event.getFromLocation().toString(), event.getToLocation().toString());
     }
 }

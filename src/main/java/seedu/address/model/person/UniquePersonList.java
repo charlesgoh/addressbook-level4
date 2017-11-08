@@ -2,6 +2,7 @@ package seedu.address.model.person;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +13,7 @@ import org.fxmisc.easybind.EasyBind;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.model.person.exceptions.PersonNotFoundException;
@@ -28,6 +30,7 @@ import seedu.address.model.person.exceptions.PersonNotFoundException;
 public class UniquePersonList implements Iterable<Person> {
 
     private final ObservableList<Person> internalList = FXCollections.observableArrayList();
+    private final ObservableList<Person> internalCopy = FXCollections.observableArrayList();
     // used by asObservableList()
     private final ObservableList<ReadOnlyPerson> mappedList = EasyBind.map(internalList, (person) -> person);
 
@@ -137,6 +140,38 @@ public class UniquePersonList implements Iterable<Person> {
         return FXCollections.unmodifiableObservableList(mappedList);
     }
 
+    //@@author Esilocke
+    /**
+     * Returns an array list of {@code Index} corresponding to the {@code ReadOnlyPerson} specified
+     */
+    public ArrayList<Index> extractIndexes(ArrayList<ReadOnlyPerson> persons) {
+        ArrayList<Index> indexes = new ArrayList<>();
+        for (ReadOnlyPerson p : persons) {
+            assert(internalList.contains(p));
+            int position = internalList.indexOf(p);
+            indexes.add(Index.fromZeroBased(position));
+        }
+        return indexes;
+    }
+
+    /**
+     * Returns an array containing:
+     * Index - The old index of each person in the internalList before sorting
+     * Value - The new index of each person after a sort operation
+     */
+    public Index[] getMappings() {
+        Index[] mappings = new Index[internalCopy.size()];
+        int count = 0;
+        for (Person p : internalCopy) {
+            assert(internalList.contains(p));
+            int index =  internalList.indexOf(p);
+            mappings[count] = Index.fromZeroBased(index);
+            count++;
+        }
+        return mappings;
+    }
+    //@@author
+
     /**
      * Sorts person list by all persons by any field in ascending or descending order
      * @param field
@@ -145,6 +180,12 @@ public class UniquePersonList implements Iterable<Person> {
     //@@author charlesgoh
     public void sortBy(String field, String order) {
         //sortyBy first chooses the right comparator
+        System.out.println(internalList.size());
+        internalCopy.clear();
+        for (Person p : internalList) {
+            internalCopy.add(p);
+        }
+        System.out.println(internalCopy.size());
         Comparator<Person> comparator = null;
 
         /**

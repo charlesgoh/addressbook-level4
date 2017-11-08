@@ -30,7 +30,6 @@ public interface AddressBookStorage {
      */
     Optional<ReadOnlyAddressBook> readAddressBook(String filePath) throws DataConversionException, IOException;
 
-    //@@author charlesgoh
     /**
      * Saves the given {@link ReadOnlyAddressBook} to the storage.
      * @param addressBook cannot be null.
@@ -42,11 +41,8 @@ public interface AddressBookStorage {
      * @see #saveAddressBook(ReadOnlyAddressBook)
      */
     void saveAddressBook(ReadOnlyAddressBook addressBook, String filePath) throws IOException;
-
+    //@@author charlesgoh
     void backupAddressBook(ReadOnlyAddressBook addressBook, String args) throws IOException;
-
-    void backupAddressBookDefault(ReadOnlyAddressBook addressBook) throws IOException;
-
+    //author
     void changeFilePath(String fp, UserPrefs u);
-    //@author
 }

@@ -1,0 +1,128 @@
+= Charles Goh - Project Portfolio
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+:imagesDir: ../images
+:stylesDir: ../stylesheets
+
+== Project: AddressBook++
+AddressBook++ is a desktop address book application used for teaching Software Engineering principles.
+The user interacts with it using a CLI, and it has a GUI created with JavaFX. It is written in Java, and has about
+6 kLoC.
+
+*Code contributed*: [https://github.com/CS2103AUG2017-W09-B2/main/blob/master/collated/main/charlesgoh.md[Functional code]] [https://github.com/CS2103AUG2017-W09-B2/main/blob/master/collated/test/charlesgoh.md[Test code]]
+
+=== Enhancement Added: Sort Command
+
+==== External behavior
+
+---
+#Start of Extract [from: User Guide]#
+
+include::../UserGuide.adoc[tag=sort]
+
+#End of Extract#
+---
+
+==== Justification
+
+As more contacts and tasks are added to the application, the lists may get long and disorganized. The Sort Command
+allows users to sort both contacts and tasks by important fields. Examples include sorting contacts by name and
+sorting contacts by deadlines.
+
+==== Implementation
+
+---
+#Start of Extract [from: Developer Guide]#
+
+include::../DeveloperGuide.adoc[tag=sort]
+
+#End of Extract#
+
+---
+
+=== Enhancement Added: Backup Command
+
+==== External behavior
+
+---
+#Start of Extract [from: User Guide]#
+
+include::../UserGuide.adoc[tag=backup]
+
+#End of Extract#
+---
+
+==== Justification
+
+Users are able to back up their data before making any changes so that in the event of an emergency (e.g. clearing all data and then closing afterwards)
+, the old save data can be restored.
+
+==== Implementation
+
+---
+#Start of Extract [from: Developer Guide]#
+
+include::../DeveloperGuide.adoc[tag=backup]
+
+#End of Extract#
+
+---
+
+=== Enhancement Added: Font Size Command
+
+==== External behavior
+
+---
+#Start of Extract [from: User Guide]#
+
+include::../UserGuide.adoc[tag=fontsize]
+
+#End of Extract#
+---
+
+==== Justification
+
+Different monitors render the application differently. On some monitors, the words appear to be too small. The font size
+commands and buttons allow users to increase/decrease/reset the font sizes at any time when using the application.
+
+==== Implementation
+
+---
+#Start of Extract [from: Developer Guide]#
+
+include::../DeveloperGuide.adoc[tag=fontsize]
+
+#End of Extract#
+
+---
+
+=== Enhancement Added: Avatar and Remark Fields
+
+==== External behavior
+
+---
+#Start of Extract [from: User Guide]#
+
+include::../UserGuide.adoc[tag=avatar]
+
+#End of Extract#
+---
+
+==== Justification
+
+Avatars and remarks help users to identify different contacts. It was also implemented with the intention of making the application
+more user friendly.
+
+==== Implementation for Avatar Field
+
+---
+#Start of Extract [from: Developer Guide]#
+
+include::../DeveloperGuide.adoc[tag=avatar]
+
+#End of Extract#
+
+---
+
+=== Other contributions
+* Added tests for task related implementations (https://github.com/CS2103AUG2017-W09-B2/main/pull/115/files[#115]) +
+* Conducted Acceptance Testing for another team [https://github.com/CS2103AUG2017-W09-B4/main/issues/77[W09-B4]]

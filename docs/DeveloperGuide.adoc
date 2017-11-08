@@ -217,7 +217,7 @@ Classes used by multiple components are in the `seedu.addressbook.commons` packa
 == Implementation
 
 This section describes some noteworthy details on how certain features are implemented.
-
+//tag::fontsize[]
 === Increase/Decrease/Reset Font Size
 
 On some screens, the text appear to be too small. The aim of the increase/decrease/reset font size feature is to allow
@@ -249,8 +249,45 @@ standardised the handling of font size change requests through events.
 **Alternative 2:** Implementing only UI functionality +
 **Pros:** Less tedious to implement and very intuitive for the user +
 **Cons:** Users who prefer typing commands will not have the option of editing their font sizes using the CLI
+//end::fontsize[]
+//tag::avatar[]
+=== Setting Avatar on ViewPersonPanel
 
-// tag::undoredo[]
+The following function allows the setting of URL for the `ImageView` attribute within the `ViewPersonPanel` class:
+[source,java]
+----
+private void initializeAvatar() {
+        try {
+            String avatarPath = person.getAvatar().value;
+            if (!avatarPath.equals("")) {
+                logger.info("Initializing avatar to image at saved URL");
+                Image newImage = new Image(avatarPath);
+                avatarImage.setImage(newImage);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+----
+
+The `initializeAvatar` method piggybacks on the `handlePersonPanelSelectionChangedEvent` event handler. Whenever there is
+a change in the person selection panel, this function will call the `initializeAvatar` method, which will update
+the `ImageView` attribute.
+[source,java]
+----
+@Subscribe
+    private void handlePersonPanelSelectionChangedEvent(PersonPanelSelectionChangedEvent event) {
+        logger.info(LogsCenter.getEventHandlingLogMessage(event));
+        this.person = event.getNewSelection().person;
+        initializeWithPerson(person);
+        initializeAvatar();
+    }
+----
+
+[NOTE]
+As of v1.5rc, the avatar field supports only URLs sourced online. References to local files may not work at the moment.
+//end::avatar[]
+//tag::undoredo[]
 === Undo/Redo mechanism
 
 The undo/redo mechanism is facilitated by an `UndoRedoStack`, which resides inside `LogicManager`. It supports undoing and redoing of commands that modifies the state of the address book (e.g. `add`, `edit`). Such commands will inherit from `UndoableCommand`.
@@ -376,30 +413,25 @@ image::UndoRedoActivityDiagram.png[width="200"]
 **Cons:** Requires dealing with commands that have already been undone: We must remember to skip these commands. Violates Single Responsibility Principle and Separation of Concerns as `HistoryManager` now needs to do two different things. +
 // end::undoredo[]
 
+// tag::task[]
 === Task Object
 
 The Task object stores information related to a single deadline or task, in a manner similar to how Person information is stored. +
-As such, it also shares the same types of commands as the Person object, namely the add, delete, list, select, and edit commands.
-Instead of making a new Logic object for each new command, polymorphism is used to implement the "Task" version of each command.
+As such, it also shares the same types of commands as the Person object, namely the `add`, `delete`, `find`, `select`, and `edit` commands.
+Object inheritance is thus used to create the commands that are shared with those used to handle Person objects.
 
-An example of using polymorphism to handle Person vs Task addition:
+==== Task-related Command implementation
+
+An example of using inheritance to handle Person vs Task addition:
 
 [source,java]
 ----
-public class AddCommand extends Command {
-    public AddCommand(ReadOnlyPerson person) {
-        toAdd = new Person(person);
-        toHandle = HANDLE_TYPE_PERSON;
-    }
+public class AddPersonCommand extends AddCommand {
+}
 
-    public AddCommand(ReadOnlyTask task) {
-        toAdd = new Task(task);
-        toHandle = HANDLE_TYPE_TASK;
-    }
+public class AddTaskCommand extends AddCommand {
 }
 ----
-
-The AddCommand will thus call a different constructor depending on the type of the argument supplied to it. To facilitate this, the respective Parser class must also be modified:
 
 [source,java]
 ----
@@ -408,21 +440,23 @@ public AddCommand parse(String args) throws ParseException {
 
     if (objectType == HANDLE_TYPE_PERSON) {
         Person toAdd = createNewPerson(args);
+        return AddPersonCommand(toAdd);
     } else if (objectType == HANDLE_TYPE_TASK) {
         Task toAdd = createNewTask(args);
+        return AddTaskCommand(toAdd);
     }
-    return new AddCommand(toAdd);
 }
 ----
 
-The AddCommandParser checks the args to see if this is a task, then creates the object to be added, and creates a new AddCommand to handle the result. +
+The Parser in charge of the command will thus return either an AddPersonCommand, or an AddTaskCommand, depending on whether you specify to add a Task or not in the arguments.
+ +
 The sequence diagram below shows how this is done:
 
 image::AddTaskSeq.png[width="800"]
 
-To support the addition of Task objects, the Storage component is modified to accept Task objects in a similar manner as to how Person objects are being stored.
+==== Task Object Storage
 
-[source, html]
+[source, xml]
 ---
     <persons>
         <name>someone else</name>
@@ -438,29 +472,30 @@ To support the addition of Task objects, the Storage component is modified to ac
     </tasks>
 ---
 
-Tasks objects are stored in the same level of hierarchy as Person objects, and during startup, are read and entered into the UniqueTaskList, which handles all the tasks that are present in the address book.
+Task objects are stored in a similar manner to Person objects, and share the same level of hierarchy as Person objects. During startup, tasks are read and entered into the UniqueTaskList, which handles all the tasks that are present in the address book.
 
 
 ==== Design Considerations
 
 **Aspect:** Implementation of Task-related commands +
-**Alternative 1 (current choice):** Use polymorphism to allow existing commands to implement the new commands +
-**Pros:** Under this scheme, any command can be extended to allow addition of new commands of any type, without affecting the architecture significantly +
-**Cons:** SRP may be violated as each Command class may now need to handle 2 different types of objects. +
-**Alternative 2:** Create new classes for all new commands +
-**Pros:** Simpler to implement. +
-**Cons:** Code duplication occurs as the commands for Person and Tasks objects share the same structure.
+**Alternative 1 (current choice):** Use inheritance to implement different commands for Task and Person objects +
+**Pros:** Can be easily extended to allow handling of other types of objects, and preserves Separation of Concerns. +
+**Cons:** Minor code duplication occurs as the commands for Person and Tasks objects share the same structure. +
+**Alternative 2:** Use polymorphism to allow existing commands to implement task handling +
+**Pros:** Code duplication is kept to a minimum as the Command will handle Task and Person objects in the same class. +
+**Cons:** Single Responsibility Principle is violated as each Command class now needs to handle 2 different types of objects. +
 
 ---
 
 **Aspect:** Storage of Task objects +
-**Alternative 1 (current choice):** Store Tasks objects in a separate XML file +
-**Pros:** Easier to manage as Person storage will not interfere with Task storage, and vice versa.
-**Cons:** All existing save/load functions will require an additional method to handle Task storage.
 **Alternative 2:** Store Task objects together in the default XML storage file +
 **Pros** Only 1 storage file is needed. The storage manager thus only needs to refer to one storage +
-**Cons** Any changes to the Person or Task will affect the storage of both the Person and Task objects. This will increase coupling between the Person and Task classes.
-
+**Cons** Any changes to the Person or Task will affect the storage of both the Person and Task objects. This will increase coupling between the Person and Task classes. +
+**Alternative 1 (current choice):** Store Tasks objects in a separate XML file +
+**Pros:** Easier to manage as Person storage will not interfere with Task storage, and vice versa. +
+**Cons:** All existing save/load functions will require an additional method to handle Task storage. +
+// end::task[]
+// tag::sort[]
 === Sort Command
 
 The sort command is facilitated by the `sortBy` methods in UniquePersonList and UniqueTaskList. It supports
@@ -510,27 +545,23 @@ Future changes to the implementation will be easier as a consequence. +
 **Alternative 2:** Duplicate a temporary version of the list and sort it for viewing (i.e. the actual list is not sorted) +
 **Pros:** Old order of contact instances remains intact. +
 **Cons:** Will use more memory and may be less intuitive for developer to understand and in terms of user experience. Also, sorting will not persist in the system.
-
+// end::sort[]
+// tag::backup[]
 === Backup Command
 
 The backup command makes use of both the model manager and the storage manager. The `LogicManager` class was
 improved to support the accessing of storage value.
 
 The backup command arguments are parsed through the `BackupCommandParser`, which passes control over to the
-`BackupCommand` class. If there is a file path specified by the user, then the `execute()` command within the
-`BackupCommand` class will save the backup file to that path. If not file path is specified, the backup file will be
-saved to a default location.
+`BackupCommand` class. The `BackupCommand` class will save the backup file to a user specified path.
 
-Suppose a user enters a new command `backup`. The backup file will be saved to a default location:
+Suppose a user enters a new command `backup filepath`. The backup file will be saved to a default location.
+The sequence diagram that illustrates this process is shown below:
 
-image::BackupSequenceDefaultDiagram.png[width="800"]
+image::BackupSequenceDiagram.png[width="800]
 
-Suppose a user enters a new command `backup testBackup.xml`. The following sequence diagram
-demonstrates how this works:
-
-image::BackupSequenceCustomDiagram.png[width="800]
-
-Note that the execution of the sort methods result in the actual person list being sorted.
+[NOTE]
+that the execution of the sort methods result in the actual person list being sorted.
 
 ==== Design Considerations
 
@@ -541,20 +572,11 @@ Note that the execution of the sort methods result in the actual person list bei
 **Alternative 2:** Implement backup command via GUI +
 **Pros:** More intuitive for all users since the options are all graphical +
 **Cons:** Hinders productivity. Excessive number of clicks to accomplish an essential task.
-
----
-
-**Aspect:** Custom and/or Default file paths for backup file +
-**Alternative 1 (current choice):** Implemented both types of commands +
-**Pros:** User can choose either command option. Gives the user more choices +
-**Cons:** May seem confusing to the user at first +
-**Alternative 2:** Implement only the default option (save backup file to data directory of application) +
-**Pros:** Faster for the user to key in one word rather than a command with many words +
-**Cons:** Reduces choice for experienced users who may want to save to another location or use a different save name
-
+// end::backup[]
+// tag::privacy[]
 === Privacy of fields
 
-The `Name`, `Phone`, `Email` and `Address` of a `Person` contains a boolean `isPrivate`, which will determine if the field belonging to that person is private or not.
+The `Name`, `Phone`, `Email`, `Address` and `Remark` of a `Person` contains a boolean `isPrivate`, which will determine if the field belonging to that person is private or not.
 
 Adding a person with private fields uses the same `AddCommand` as adding a person with no public fields. +
 To determine if the field that is added should be set to private, a `p` is added to the start of the prefix. +
@@ -566,7 +588,7 @@ Depending on whether or not the field is supposed to be private, `ParsetUtil` wi
 Upon obtaining all the fields anc creating a new `Person`, `AddCommandParser` will create a new `AddCommand` to handle the addition of the new `Person`.
 
 image::AddPrivateSequenceDiagram.png[width="800"]
-_Figure 3.5.1 : Sequence Diagram for adding a Person with private fields_
+_Figure 3.6.1 : Sequence Diagram for adding a Person with private fields_
 
 If a field is private, then the `toString` method will return a string `<Private [FIELD]>`, where `[FIELD]` is the name of that field. +
 This can be seen from the `toString` method in `Name`:
@@ -600,6 +622,8 @@ This is done by adding the following
    private Boolean emailIsPrivate;
 @XmlElement(required = true)
    private Boolean addressIsPrivate;
+@XmlElement(required = true)
+   private Boolean remarkIsPrivate;
 ----
 Which results in a `Person` being saved in the xml file in the following format
 
@@ -614,6 +638,8 @@ Which results in a `Person` being saved in the xml file in the following format
     <emailIsPrivate>false</emailIsPrivate>
     <address>Blk 30 Geylang Street 29, #06-40</address>
     <addressIsPrivate>false</addressIsPrivate>
+    <remark>cheerful lad</remark>
+    <remarkIsPrivate>false</remarkIsPrivate>
     <tagged>friends</tagged>
 </persons>
 ----
@@ -633,17 +659,17 @@ This can be seen from the following code, which is used for the generation of a 
 [source,java]
 ----
 private static Name createUpdatedName(ReadOnlyPerson personToEdit, EditPersonDescriptor editPersonDescriptor) {
-        Name updatedName;
-        if (!personToEdit.getName().isPrivate()) {
-            updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
-            if (editPersonDescriptor.getName().isPresent()) {
-                areFieldsAllPrivate = false;
-            }
-        } else {
-            updatedName = personToEdit.getName();
+    Name updatedName;
+    if (!personToEdit.getName().isPrivate()) {
+        updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
+        if (editPersonDescriptor.getName().isPresent()) {
+            areFieldsAllPrivate = false;
         }
-        return updatedName;
+    } else {
+        updatedName = personToEdit.getName();
     }
+    return updatedName;
+}
 ----
 
 Upon generation of all the fields, if `areFieldsAllPrivate` is still true, `createEditedPerson` will throw an `IllegalArgumentException`, which will cause `EditCommand` to throw a `CommandException` and prevent the command from continuing.
@@ -674,7 +700,7 @@ Upon generation of all the fields, if `areFieldsAllPrivate` is still true, `crea
 The sequence diagram for `ChangePrivacyCommand` is illustrated below.
 
 image::ChangePrivacySequenceDiagram.png[width="800"]
-_Figure 3.6.1 : Sequence Diagram for changing the privacy of a Person's fields_
+_Figure 3.7.1 : Sequence Diagram for changing the privacy of a Person's fields_
 
 Upon receiving a String containing the arguments from `AddressBookParser`, `ChangePrivacyCommandParser` will create a `PersonPrivacySettings` object.
 
@@ -697,10 +723,12 @@ This allows `isAnyFieldNonNull` to check if the user has input any field at all.
 **Alternative 1 (current choice):** Create a separate command to do so. +
 **Pros:** It is clear to users and developers that `changeprivacy` is to modify a person's privacy while `edit` changes the actual data if the relevant field is not private.  +
 **Cons:** Additional command, parser and tests must be created.  +
-**Alternative 2:** Enhance the functi-onality of EditCommand. +
+**Alternative 2:** Enhance the functionality of EditCommand. +
 **Pros:** Can make use of existing code to aid the implementation. +
 **Cons:** Increases the complexity of EditCommand for both users and developers. More ambiguous as to how editing a private field will affect the data.
+// end::privacy[]
 
+// tag::locate[]
 === Locating a Person on Google Maps
 
 Upon calling the `locate` command, `LocateCommandParser` will parse the input string into an `Index`, and create a new `LocateCommand`. Should the arguments be a non-integer, a `ParseException` will be thrown. +
@@ -709,14 +737,14 @@ This can be seen from the code snippet below:
 [source, java]
 ----
  public LocateCommand parse(String args) throws ParseException {
-        try {
-            Index index = ParserUtil.parseIndex(args);
-            return new LocateCommand(index);
-        } catch (IllegalValueException ive) {
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, LocateCommand.MESSAGE_USAGE));
-        }
+    try {
+        Index index = ParserUtil.parseIndex(args);
+        return new LocateCommand(index);
+    } catch (IllegalValueException ive) {
+        throw new ParseException(
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, LocateCommand.MESSAGE_USAGE));
     }
+}
 ----
 
 Upon execution of `LocateCommand`, it will search the `Model` for the `Person` at the input `Index`. If the `Index` is out of range of the list of `Person`s, a `CommandException` will be thrown.
@@ -748,30 +776,180 @@ BrowserPanel will then use `handleBrowserPanelLocationEvent` to process this new
 [source, java]
 ----
  private void loadMapsPage(ReadOnlyPerson person) {
-        if (person.getAddress().isPrivate()) {
-            raise(new NewResultAvailableEvent(PRIVATE_ADDRESS_CANNOT_SEARCH));
-        } else {
-            loadPage(GOOGLE_MAPS_URL_PREFIX + person.getAddress().toString().replaceAll(" ", "+")
-                + GOOGLE_MAPS_URL_SUFFIX);
-        }
+    if (person.getAddress().isPrivate()) {
+        raise(new NewResultAvailableEvent(PRIVATE_ADDRESS_CANNOT_SEARCH));
+    } else {
+        loadPage(GOOGLE_MAPS_URL_PREFIX + person.getAddress().toString().replaceAll(" ", "+")
+            + GOOGLE_MAPS_URL_SUFFIX);
     }
+}
 ----
 
 The overall sequence of events is illustrated by the following sequence diagram:
 
 image::LocateSequenceDiagram.png[width="800"]
-_Figure 3.7.1 : Sequence Diagram for Locating a Person's Address_
+_Figure 3.8.1 : Sequence Diagram for Locating a Person's Address_
 
 ==== Design Considerations
 
 **Aspect:** Implementation of the Google Maps to search for a person's `Address` +
-**Alternative 1 (current choice):** Create a seperate command `locate`. +
+**Alternative 1 (current choice):** Create a separate command `locate`. +
 **Pros:** No modification needed for existing commands, which makes it clear the purpose of each command. +
 **Cons:** Additional commands will need to be learnt for both developers and users. +
 **Alternative 2:** Add the functionality into `SelectCommand`. +
 **Pros:** Expands the utility of `SelectCommand` beyond performing a Google search on their name. +
 **Cons:** Will require significant modification of existing code, and may make it more confusing for users.
+// end::locate[]
 
+// tag::navigate[]
+=== Navigating from one address to another using Google Maps
+
+When the `navigate` command is entered into the command line, `NavigateCommandParse` will first reset its internal `from`, `to`, `fromIndex`, `toIndex` to null. It will then check for the input prefixes and ensure that only one of the prefixes from the group `fp/`, `ft/`, and `fa/`, which we will subsequently call the `from` prefixes are present. It then does the same with the prefixes from the group `tp/`, `tt/` and `ta/`, which we will call the `to` prefixes. +
+
+This is done by invoking the `checkFrom` and `checkTo` methods as can be seen from the code snippet below. For the example `checkFrom`, it takes in 3 booleans on whether or not each prefix is present and checks whether or not there is exactly one kind of `from` prefix. It throws an error if there are no `from` prefixes or more than one type of `from` prefixes.
+
+[source, java]
+----
+private void checkFrom(ArgumentMultimap argumentMultimap, boolean fromAddress, boolean fromPerson, boolean fromTask)
+        throws ParseException {
+    if (!(fromAddress || fromPerson || fromTask)) {
+        throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, NavigateCommand.MESSAGE_USAGE));
+    } else if ((fromAddress && (fromPerson || fromTask)) || (fromPerson && fromTask)) {
+        // If 2 or more from prefixes are present
+        throw new ParseException(NavigateCommand.MESSAGE_MULTIPLE_FROM_ERROR);
+    } else {
+        try {
+            setArgsForNavigateCommand(argumentMultimap, fromAddress, fromPerson, true);
+        } catch (IllegalValueException e) {
+            throw new ParseException(e.getMessage(), e);
+        }
+    }
+}
+----
+
+`checkFrom` calls `setArgsForNavigateCommand`, which sets the variables in the `NavigateCommandParser` to the appropriate values depending on whether the address originates from a person, a task or is a manual input by the user.
+
+[source, java]
+----
+private void setArgsForNavigateCommand(ArgumentMultimap argumentMultimap, boolean address, boolean person, boolean forFrom) throws IllegalValueException {
+    if (address) {
+        if (forFrom) {
+            from = new Location(ParserUtil.parseLocationFromAddress(
+                    argumentMultimap.getValue(PREFIX_NAVIGATE_FROM_ADDRESS)).get().toString());
+        } else {
+            to = new Location(ParserUtil.parseLocationFromAddress(
+                    argumentMultimap.getValue(PREFIX_NAVIGATE_TO_ADDRESS)).get().toString());
+        }
+    } else if (person) {
+        if (forFrom) {
+            fromIndex = ParserUtil.parseIndex(argumentMultimap
+                    .getValue(PREFIX_NAVIGATE_FROM_PERSON).get());
+        } else {
+            toIndex = ParserUtil.parseIndex(argumentMultimap
+                    .getValue(PREFIX_NAVIGATE_TO_PERSON).get());
+        }
+    } else {
+        if (forFrom) {
+            fromIndex = ParserUtil.parseIndex(argumentMultimap
+                    .getValue(PREFIX_NAVIGATE_FROM_TASK).get());
+        } else {
+            toIndex = ParserUtil.parseIndex(argumentMultimap
+                    .getValue(PREFIX_NAVIGATE_TO_TASK).get());
+        }
+    }
+}
+----
+
+Finally, `NavigateCommandParser` will create a new `NavigateCommand` based on the inputs as set by `setArgsForNavigateCommand`.
+
+When `NavigateCommand` is created, it first checks if there are duplicate `from` or `to` addresses that are passed into it and throws an error if that is the case.
+
+[source, java]
+----
+private void checkDuplicateFromAndToLocation(Location locationFrom, Location locationTo, Index fromIndex, Index toIndex) throws IllegalArgumentException {
+    if (locationFrom != null && fromIndex != null) {
+        throw new IllegalArgumentException(MESSAGE_MULTIPLE_FROM_ERROR);
+    }
+    if (locationTo != null && toIndex != null) {
+        throw new IllegalArgumentException(MESSAGE_MULTIPLE_TO_ERROR);
+    }
+}
+----
+
+If it passes this check, `NavigateCommand` stores `fromLocation` and `toLocation`, which are the Locations of any manually added address by the user to navigate from and to respectively. It also stores `toIndex` and `fromIndex`, which are the Indexes of the `Person` or `Task` to extract the address from as well as `toIsTask` and `fromIsTask`, which are booleans that indicate whether `toIndex` and `fromIndex` are indexes of Persons or Tasks.
+
+Upon execution of `NavigateCommmand`, it will first check if it has a non-null `fromIndex`, if it does, it will create a new Location based on its `fromIndex` and `fromIsTask` values using the `setLocationByIndex` method. Otherwise, it will set the Location to be the Location in `locationfrom`. This can be seen below:
+[source, java]
+----
+if (fromIndex != null) {
+        try {
+            from = setLocationByIndex(fromIndex, fromIsTask);
+        } catch (IllegalValueException e) {
+            throw new IllegalArgumentException(MESSAGE_PRIVATE_PERSON_ADDRESS_ERROR);
+        }
+    } else {
+        from = locationFrom;
+    }
+----
+
+setLocationByIndex throws Exceptions if the target Person or Task does not have a valid Address to extract.
+
+[source, java]
+----
+if (fromIndex != null) {
+        try {
+            from = setLocationByIndex(fromIndex, fromIsTask);
+        } catch (IllegalValueException e) {
+            throw new IllegalArgumentException(MESSAGE_PRIVATE_PERSON_ADDRESS_ERROR);
+        }
+    } else {
+        from = locationFrom;
+    }
+----
+
+`NavigateCommand` does the same for the Address to navigate `To` and posts a new `BrowserPanelNavigateEvent`, passing in the `Location` to navigate `From` and the `Location` to navigate `To`. +
+`NavigateCommand` will then create a new `CommandResult` to indicate a successful `Command`.
+
+`BrowserPanel` will then get the information from this `BrowserPanelNavigateEvent`, and load the appropriate Google Maps URL after replacing information such as the Unit Number and extra whitespaces. This has to be done as Google Maps does not function properly with Unit Numbers or spaces in its URL.
+
+[source, java]
+----
+private void loadDirectionsPage(String fromLocation, String toLocation) {
+    loadPage(GOOGLE_MAPS_DIRECTIONS_PREFIX + "&origin="
+            + fromLocation.replaceAll("#(\\w+)\\s*", "").replaceAll(" ", "+")
+            .replaceAll("-(\\w+)\\s*", "")
+            + "&destination="
+            + toLocation.replaceAll("#(\\w+)\\s*", "").replaceAll(" ", "+")
+            .replaceAll("-(\\w+)\\s*", "")
+            + GOOGLE_MAPS_DIRECTIONS_SUFFIX);
+}
+----
+The overall sequence of events is illustrated by the following sequence diagram:
+
+image::NavigateSequenceDiagram.png[width="800"]
+_Figure 3.9.1 : Sequence Diagram for Navigating from one Address to another_
+
+
+==== Design Considerations
+
+**Aspect:** How to pass the appropriate information to NavigateCommand +
+**Alternative 1 (current choice):** Have a constructor that takes in a large number of arguments so that NavigateCommand can correctly identify what kind of Location to post in BrowserPanelNavigateEvent. +
+**Pros:** Only 1 constructor needed. +
+**Cons:** Additional methods will be needed to properly identify which Location to use for navigation.  +
+**Alternative 2:** Create many constructors to segregate the different possible scenarios that might happen. +
+**Pros:** It is clear what information to use to generate the Locations +
+**Cons:** Requires large numbers of constructors to be created, easy for mistakes to occur as Constructors all share the same name but different argument types.
+
+**Aspect:** How to transfer information of the address from one class to another +
+**Alternative 1 (current choice):** Wrap the address in a `Location` class before posting the BrowserPanelNavigateEvent. +
+**Pros:** Only Locations, which indicates that the address is properly parsed, will be passed for the BrowserPanel to read, reducing the possibility of BrowserPanel reading stray unwanted strings as addresses to navigate to and from. The value stored inside each Location cannot be altered once that Location object has been created. +
+**Cons:** A new class has to be created and Strings, Addresses and TaskAddresses will need to be converted to Locations first.  +
+**Alternative 2:** Simply pass on a String containing the address from class to class +
+**Pros:** Easy to read and transfer information, lower overhead +
+**Cons:** It is easier for stray Strings to pollute the information, and the Strings can be unintentionally modified.
+// end::navigate[]
+
+// tag::adddeletetag[]
 === Add/Delete Tag mechanism
 
 The add/delete tag mechanism is facilitated by `personArrayList`, which resides inside `LogicManager`. It supports add/delete
@@ -840,6 +1018,9 @@ This violates the Single Responsibility Principle.
 **Alternative 2:** Modify the existing `add` and `delete` command +
 **Pros:** Users could use the same commands to achieve different purpose +
 **Cons:** Additional override the constructor for the existing command. It might not be easy for the beginner.
+// end::adddeletetag[]
+
+// tag::findtag[]
 
 === Find Tag mechanism
 
@@ -908,6 +1089,7 @@ If the input index tags do not exist, the `FindTagCommand` will give a empty lis
 **Pros:** Easier for user. They do not have to memorize some many commands. +
 **Cons:** The existing `FindCommand` will not only response for finding persons through names only. This Violates Single Responsibility Principle
 and Separation of Concerns as FindCommand now needs to do two different things.
+// end::findtag[]
 
 === Logging
 

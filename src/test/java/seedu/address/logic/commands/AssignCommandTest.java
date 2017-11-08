@@ -24,6 +24,7 @@ import seedu.address.logic.UndoRedoStack;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.person.ReadOnlyPerson;
 import seedu.address.model.task.ReadOnlyTask;
 //@@author Esilocke
 public class AssignCommandTest {
@@ -33,9 +34,13 @@ public class AssignCommandTest {
     public void execute_assignOnePerson_addSuccessful() throws Exception {
         List<Index> toAssign = Arrays.asList(INDEX_FIRST_PERSON);
         ReadOnlyTask assignedTask = model.getFilteredTaskList().get(0);
+        ReadOnlyPerson assignedPerson = model.getFilteredPersonList().get(0);
+        ArrayList<ReadOnlyPerson> persons = new ArrayList<>();
+        persons.add(assignedPerson);
 
         AssignCommand assignCommand = prepareCommand(toAssign, INDEX_FIRST_TASK);
         ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.assignToTask(persons, assignedTask);
         String expectedMessage = String.format(AssignCommand.MESSAGE_SUCCESS, toAssign.size(),
                 assignedTask);
         assertCommandSuccess(assignCommand, model, expectedMessage, expectedModel);
@@ -45,9 +50,17 @@ public class AssignCommandTest {
     public void execute_assignManyPersons_addSuccessful() throws Exception {
         List<Index> toAssign = Arrays.asList(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON, INDEX_THIRD_PERSON);
         ReadOnlyTask assignedTask = model.getFilteredTaskList().get(0);
+        ReadOnlyPerson firstPerson = model.getFilteredPersonList().get(0);
+        ReadOnlyPerson secondPerson = model.getFilteredPersonList().get(1);
+        ReadOnlyPerson thirdPerson = model.getFilteredPersonList().get(2);
+        ArrayList<ReadOnlyPerson> persons = new ArrayList<>();
+        persons.add(firstPerson);
+        persons.add(secondPerson);
+        persons.add(thirdPerson);
 
         AssignCommand assignCommand = prepareCommand(toAssign, INDEX_FIRST_TASK);
         ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.assignToTask(persons, assignedTask);
         String expectedMessage = String.format(AssignCommand.MESSAGE_SUCCESS, toAssign.size(),
                 assignedTask);
         assertCommandSuccess(assignCommand, model, expectedMessage, expectedModel);
@@ -57,10 +70,14 @@ public class AssignCommandTest {
     public void execute_assignDuplicates_addSuccessful() throws Exception {
         List<Index> toAssign = Arrays.asList(INDEX_FIRST_PERSON, INDEX_FIRST_PERSON, INDEX_FIRST_PERSON);
         ReadOnlyTask assignedTask = model.getFilteredTaskList().get(0);
+        ReadOnlyPerson assignedPerson = model.getFilteredPersonList().get(0);
+        ArrayList<ReadOnlyPerson> persons = new ArrayList<>();
+        persons.add(assignedPerson);
 
         AssignCommand assignCommand = prepareCommand(toAssign, INDEX_FIRST_TASK);
         ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         String expectedMessage = String.format(AssignCommand.MESSAGE_SUCCESS, 1, assignedTask);
+        expectedModel.assignToTask(persons, assignedTask);
         assertCommandSuccess(assignCommand, model, expectedMessage, expectedModel);
     }
 

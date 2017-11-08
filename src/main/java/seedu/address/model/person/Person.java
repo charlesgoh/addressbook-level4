@@ -24,13 +24,14 @@ public class Person implements ReadOnlyPerson {
     private ObjectProperty<Boolean> favourite;
     private ObjectProperty<Remark> remark;
     private ObjectProperty<UniqueTagList> tags;
+    private ObjectProperty<Avatar> avatar;
 
     /**
      * Every field must be present and not null.
      */
 
     public Person(Name name, Phone phone, Email email, Address address,
-                  Boolean favourite, Remark remark, Set<Tag> tags) {
+                  Boolean favourite, Remark remark, Avatar avatar, Set<Tag> tags) {
         this.name = new SimpleObjectProperty<>(name);
         this.phone = new SimpleObjectProperty<>(phone);
         this.email = new SimpleObjectProperty<>(email);
@@ -39,6 +40,7 @@ public class Person implements ReadOnlyPerson {
         this.remark = new SimpleObjectProperty<>(remark);
         // protect internal tags from changes in the arg list
         this.tags = new SimpleObjectProperty<>(new UniqueTagList(tags));
+        this.avatar = new SimpleObjectProperty<>(avatar);
     }
 
     /**
@@ -46,7 +48,7 @@ public class Person implements ReadOnlyPerson {
      */
     public Person(ReadOnlyPerson source) {
         this(source.getName(), source.getPhone(), source.getEmail(), source.getAddress(), source.getFavourite(),
-             source.getRemark(), source.getTags());
+             source.getRemark(), source.getAvatar(), source.getTags());
     }
 
     public void setName(Name name) {
@@ -119,6 +121,8 @@ public class Person implements ReadOnlyPerson {
         return favourite.get();
     }
     //@@author
+
+    //@@author charlesgoh
     public void setRemark(Remark remark) {
         this.remark.set(requireNonNull(remark));
     }
@@ -133,6 +137,20 @@ public class Person implements ReadOnlyPerson {
         return remark.get();
     }
 
+    public void setAvatar(Avatar avatar) {
+        this.avatar.set(requireNonNull(avatar));
+    }
+
+    @Override
+    public ObjectProperty<Avatar> avatarProperty() {
+        return avatar;
+    }
+
+    @Override
+    public Avatar getAvatar() {
+        return avatar.get();
+    }
+    //@@author
     /**
      * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
      * if modification is attempted.
@@ -163,7 +181,7 @@ public class Person implements ReadOnlyPerson {
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, favourite, remark, tags);
+        return Objects.hash(name, phone, email, address, favourite, remark, tags, avatar);
     }
 
     @Override
